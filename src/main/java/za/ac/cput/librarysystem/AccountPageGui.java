@@ -1,10 +1,6 @@
 package za.ac.cput.librarysystem;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -12,13 +8,15 @@ import javax.swing.*;
 public class AccountPageGui extends JFrame implements ActionListener {
 
     JButton topmenuBtn, checkOutBtn, logOutBtn;
-    JPanel pnlSouth, pnlNorth, pnlEast, pnlWest, pnlCenter;
+    JPanel pnlSouth, pnlNorth, pnlEast, pnlWest, pnlCenter, backgroundPanel;
     JLabel lblAccount, lblOverdue, lblAvailable, lblFine, lblfineAmount, lblLoanedBooks, lblbooksNo;
+    JLabel background;
 
     public AccountPageGui() {
         super("Account");
+
         checkOutBtn = new JButton("Check out");
-        topmenuBtn = new JButton("top Menu");
+        topmenuBtn = new JButton("Top Menu");
         logOutBtn = new JButton("Log Out");
 
         pnlSouth = new JPanel();
@@ -26,6 +24,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlEast = new JPanel();
         pnlWest = new JPanel();
         pnlCenter = new JPanel();
+        backgroundPanel = new JPanel(null);
 
         lblAccount = new JLabel("Account");
         lblOverdue = new JLabel("Overdue");
@@ -34,12 +33,16 @@ public class AccountPageGui extends JFrame implements ActionListener {
         lblfineAmount = new JLabel("R0");
         lblLoanedBooks = new JLabel("Loaned Books");
         lblbooksNo = new JLabel("5");
-        
+
         topmenuBtn.addActionListener(this);
         checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
-        
-        
+
+        background = new JLabel(new ImageIcon("bg.jpeg"));
+        background.setBounds(0, 0, 500, 500);
+        backgroundPanel.add(background);
+
+        setGui();
     }
 
     public void setGui() {
@@ -85,24 +88,27 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlSouth.add(checkOutBtn);
         pnlSouth.add(logOutBtn);
 
+        this.setLayout(new BorderLayout());
         this.add(pnlSouth, BorderLayout.SOUTH);
         this.add(pnlNorth, BorderLayout.NORTH);
+        this.add(backgroundPanel, BorderLayout.CENTER);
         this.add(pnlCenter, BorderLayout.CENTER);
-        this.add(pnlWest, BorderLayout.WEST);
+          // Add the background panel here
+
+        this.setLocationRelativeTo(null);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == logOutBtn) {
             JOptionPane.showMessageDialog(this, "Logged out");
-            //this.topMenu();
         } else if (e.getSource() == checkOutBtn) {
-            JOptionPane.showMessageDialog(this, "checked out success");
-            //this.setSignUp();
+            JOptionPane.showMessageDialog(this, "Checked out successfully");
         } else if (e.getSource() == topmenuBtn) {
-            JOptionPane.showMessageDialog(this, "back to top menu");
-        } 
-
+            JOptionPane.showMessageDialog(this, "Back to top menu");
+        }
     }
-   
 }
+
+
 
