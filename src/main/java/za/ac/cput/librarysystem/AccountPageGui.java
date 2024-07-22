@@ -56,8 +56,10 @@ public class AccountPageGui extends JFrame implements ActionListener {
         gbc.gridy = 0;
         gbc.insets = new Insets(10, 10, 10, 10);
         pnlNorth.add(lblAccount, gbc);
+         pnlNorth.setOpaque(false);
 
         pnlCenter.setLayout(new GridBagLayout());
+         pnlCenter.setOpaque(false);
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(40, 70, 40, 70);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -84,6 +86,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlCenter.add(lblbooksNo, gbc);
 
         pnlSouth.setLayout(new GridLayout(1, 3));
+        pnlSouth.setOpaque(false);
         pnlSouth.add(topmenuBtn);
         pnlSouth.add(checkOutBtn);
         pnlSouth.add(logOutBtn);
@@ -93,6 +96,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         this.add(pnlNorth, BorderLayout.NORTH);
         this.add(backgroundPanel, BorderLayout.CENTER);
         this.add(pnlCenter, BorderLayout.CENTER);
+        
           // Add the background panel here
 
         this.setLocationRelativeTo(null);
