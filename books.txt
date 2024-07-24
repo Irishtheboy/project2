@@ -1,0 +1,8 @@
+The Hunger Games;Suzanne Collins;first_book.jpg
+Catching Fire;Suzanne Collins;book_two.jpg
+Mocking Jay;Suzanne Collins;book_three.jpg
+Songbirds & Snakes;Suzanne Collins;book_four.jpg
+Divergent;Veronica Roth;book_five.jpg
+Insurgent;Veronica Roth;book_six.jpg
+Allegiant;Veronica Roth;book_seven.jpg
+Four;Veronica Roth;book_eight.jpeg
