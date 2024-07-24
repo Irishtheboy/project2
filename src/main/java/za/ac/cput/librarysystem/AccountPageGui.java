@@ -3,28 +3,36 @@ package za.ac.cput.librarysystem;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class AccountPageGui extends JFrame implements ActionListener {
 
-    JButton topmenuBtn, checkOutBtn, logOutBtn;
-    JPanel pnlSouth, pnlNorth, pnlEast, pnlWest, pnlCenter, backgroundPanel;
-    JLabel lblAccount, lblOverdue, lblAvailable, lblFine, lblfineAmount, lblLoanedBooks, lblbooksNo;
-    JLabel background;
+    private JButton topmenuBtn, checkOutBtn, logOutBtn;
+    private JPanel pnlSouth, pnlNorth, pnlCenter;
+    private JLabel lblAccount, lblOverdue, lblAvailable, lblFine, lblfineAmount, lblLoanedBooks, lblbooksNo;
+    private BufferedImage backgroundImage;
 
     public AccountPageGui() {
         super("Account");
 
-        checkOutBtn = new JButton("Check out");
+        // Load the background image
+        try {
+            backgroundImage = ImageIO.read(new File("C:/Users/Sabura11/Documents/NetBeansProjects/LibrarySystem/src/main/Resources/bg.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         topmenuBtn = new JButton("Top Menu");
+        checkOutBtn = new JButton("Check out");
         logOutBtn = new JButton("Log Out");
 
         pnlSouth = new JPanel();
         pnlNorth = new JPanel();
-        pnlEast = new JPanel();
-        pnlWest = new JPanel();
         pnlCenter = new JPanel();
-        backgroundPanel = new JPanel(null);
 
         lblAccount = new JLabel("Account");
         lblOverdue = new JLabel("Overdue");
@@ -38,17 +46,17 @@ public class AccountPageGui extends JFrame implements ActionListener {
         checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
 
-        background = new JLabel(new ImageIcon("bg.jpeg"));
-        background.setBounds(0, 0, 500, 500);
-        backgroundPanel.add(background);
-
         setGui();
     }
 
     public void setGui() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(500, 500);
-        this.setVisible(true);
+
+        // Set the background panel
+        BackgroundPanel backgroundPanel = new BackgroundPanel();
+        backgroundPanel.setLayout(new BorderLayout());
+        this.setContentPane(backgroundPanel);
 
         pnlNorth.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -56,10 +64,10 @@ public class AccountPageGui extends JFrame implements ActionListener {
         gbc.gridy = 0;
         gbc.insets = new Insets(10, 10, 10, 10);
         pnlNorth.add(lblAccount, gbc);
-         pnlNorth.setOpaque(false);
+        pnlNorth.setOpaque(false);
 
         pnlCenter.setLayout(new GridBagLayout());
-         pnlCenter.setOpaque(false);
+        pnlCenter.setOpaque(false);
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(40, 70, 40, 70);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -91,15 +99,12 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlSouth.add(checkOutBtn);
         pnlSouth.add(logOutBtn);
 
-        this.setLayout(new BorderLayout());
-        this.add(pnlSouth, BorderLayout.SOUTH);
-        this.add(pnlNorth, BorderLayout.NORTH);
-        this.add(backgroundPanel, BorderLayout.CENTER);
-        this.add(pnlCenter, BorderLayout.CENTER);
-        
-          // Add the background panel here
+        backgroundPanel.add(pnlNorth, BorderLayout.NORTH);
+        backgroundPanel.add(pnlSouth, BorderLayout.SOUTH);
+        backgroundPanel.add(pnlCenter, BorderLayout.CENTER);
 
         this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     @Override
@@ -112,7 +117,21 @@ public class AccountPageGui extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, "Back to top menu");
         }
     }
+
+    // Inner class for background panel
+    class BackgroundPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (backgroundImage != null) {
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
+    }
+
+
 }
+
 
 
 
