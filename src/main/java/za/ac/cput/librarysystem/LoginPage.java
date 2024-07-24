@@ -1,13 +1,12 @@
 package za.ac.cput.librarysystem;
-import za.ac.cput.librarysystem.BookLib;
-
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import javax.imageio.ImageIO;
 
 public class LoginPage extends JFrame {
@@ -18,6 +17,7 @@ public class LoginPage extends JFrame {
     private JPasswordField passwordText;
     private JButton btnLogin;
     private BufferedImage backgroundImage;
+    private Map<String, String> credentials;
 
     public LoginPage() {
         initializeComponents();
@@ -33,6 +33,9 @@ public class LoginPage extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Load user credentials from file
+        credentials = loadCredentialsFromFile("users.txt");
 
         setTitle("User Login");
 
@@ -91,7 +94,6 @@ public class LoginPage extends JFrame {
         sPanel.add(signUpLabel);
         backgroundPanel.add(sPanel);
     }
-    
 
     private void addListeners() {
         btnLogin.addActionListener(new ActionListener() {
@@ -112,7 +114,6 @@ public class LoginPage extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JOptionPane.showMessageDialog(null, "Sign-up functionality goes here.");
-                 
             }
         });
     }
@@ -124,7 +125,23 @@ public class LoginPage extends JFrame {
     }
 
     private boolean isValidLogin(String username, String password) {
-        return username.equals("Teyana") && password.equals("12345");
+        return credentials.containsKey(username) && credentials.get(username).equals(password);
+    }
+
+    private Map<String, String> loadCredentialsFromFile(String filename) {
+        Map<String, String> credentials = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] details = line.split(",");
+                if (details.length == 2) {
+                    credentials.put(details[0], details[1]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return credentials;
     }
 
     // Inner class for background panel
@@ -138,6 +155,7 @@ public class LoginPage extends JFrame {
         }
     }
 }
+
 
 
 
