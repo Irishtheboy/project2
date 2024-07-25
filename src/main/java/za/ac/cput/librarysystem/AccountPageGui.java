@@ -19,9 +19,9 @@ public class AccountPageGui extends JFrame implements ActionListener {
     public AccountPageGui() {
         super("Account");
 
-        // Load the background image
+        
         try {
-            backgroundImage = ImageIO.read(new File("C:/Users/Sabura11/Documents/NetBeansProjects/LibrarySystem/src/main/Resources/bg.jpg"));
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream("/bg.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,7 +118,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         }
     }
 
-    // Inner class for background panel
+    
     class BackgroundPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {

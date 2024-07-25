@@ -29,7 +29,7 @@ public class LoginPage extends JFrame {
     private void initializeComponents() {
         // Load the background image
         try {
-            backgroundImage = ImageIO.read(new File("C:/Users/Sabura11/Documents/NetBeansProjects/LibrarySystem/src/main/Resources/bg.jpg"));
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream("/bg.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
