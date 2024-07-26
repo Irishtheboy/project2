@@ -1,7 +1,11 @@
+
 package za.ac.cput.librarysystem;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -9,20 +13,29 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
-public class BookLib implements ActionListener {
+
+public class AudioBook implements ActionListener{
     JFrame frame;
     JButton accountbtn, checkoutbtn, topMenubtn;
     List<Book> books;
 
-    public BookLib() {
+    public AudioBook() {
         books = loadBooksFromFile("books.txt");
 
         frame = new JFrame("Book Library");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(880, 600);
 
-        JLabel title = new JLabel("BOOKS", SwingConstants.CENTER);
+        JLabel title = new JLabel("AUDIO BOOKS", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         frame.add(title, BorderLayout.NORTH);
 
@@ -50,7 +63,7 @@ public class BookLib implements ActionListener {
         JPanel bookPanel = new JPanel(new GridLayout(2, 4, 10, 10));
 
         for (Book book : books) {
-            JPanel bookPanelItem = new JPanel(new BorderLayout());          
+            JPanel bookPanelItem = new JPanel(new BorderLayout());
             JLabel bookPic = new JLabel(new ImageIcon(book.getImagePath()));
             bookPanelItem.add(bookPic, BorderLayout.CENTER);
 
@@ -61,7 +74,6 @@ public class BookLib implements ActionListener {
             JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
             JButton trolleyBtn = new JButton(new ImageIcon("add.png"));
-            
 
             bookName.setAlignmentX(Component.CENTER_ALIGNMENT);
             bookAuth.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -115,7 +127,7 @@ public class BookLib implements ActionListener {
             JOptionPane.showMessageDialog(null, "Back to top menu");
         }
     }
-   
+
     // Inner class for Book
     private static class Book {
         private String name;
@@ -141,7 +153,5 @@ public class BookLib implements ActionListener {
         }
     }
 }
-
-
-
+    
 
