@@ -1,0 +1,3 @@
+overdue_books=3
+fine_amount=R50
+loaned_books=2

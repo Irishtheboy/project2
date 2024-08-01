@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package za.ac.cput.librarysystem;
+package za.ac.cput.librarysystemGui;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -29,7 +29,7 @@ public class SignupPageGui extends JFrame {
     JButton signUpButton;
     
     public SignupPageGui() {
-        //super("LibrarySystem");
+        
         setTitle("Library Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
@@ -88,9 +88,7 @@ public class SignupPageGui extends JFrame {
         
         mainPnl.add(centerPnl, BorderLayout.CENTER);
         
-//        southPnl.add(signUpButton);
-//        southPnl.add(loginLinkLbl);
-//        mainPnl.add(southPnl, BorderLayout.SOUTH);
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(signUpButton);
         southPnl.add(buttonPanel);
@@ -132,7 +130,9 @@ public class SignupPageGui extends JFrame {
         loginLinkLbl.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                openLoginPage();
+                JOptionPane.showMessageDialog(null, "Sign-up functionality goes here.");
+                new LoginPage().setVisible(true);
+                dispose();
             }
         });
     }
@@ -157,7 +157,7 @@ public class SignupPageGui extends JFrame {
                 throw new IllegalArgumentException("Phone number must be 10 digits.");
             }
 
-            // Here you would typically save the user data to a database
+            
             
             JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
@@ -179,7 +179,7 @@ public class SignupPageGui extends JFrame {
     private void openLoginPage() {
 
         JOptionPane.showMessageDialog(this, "Redirecting to login page...", "Login", JOptionPane.INFORMATION_MESSAGE);
-        // Here implement the logic to switch to a login panel 
+       
     }
     
     

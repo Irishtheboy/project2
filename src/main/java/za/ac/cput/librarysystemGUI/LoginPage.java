@@ -1,4 +1,4 @@
-package za.ac.cput.librarysystem;
+package za.ac.cput.librarysystemGui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,10 @@ public class LoginPage extends JFrame {
     private JButton btnLogin;
     private BufferedImage backgroundImage;
     private Map<String, String> credentials;
+    
+    SignupPageGui s = new SignupPageGui();
+    
+    
 
     public LoginPage() {
         initializeComponents();
@@ -29,7 +33,7 @@ public class LoginPage extends JFrame {
     private void initializeComponents() {
         // Load the background image
         try {
-            backgroundImage = ImageIO.read(getClass().getResourceAsStream("/bg.jpg"));
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream(""));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,7 +107,8 @@ public class LoginPage extends JFrame {
                 String password = new String(passwordText.getPassword());
                 if (isValidLogin(username, password)) {
                     JOptionPane.showMessageDialog(null, "Welcome!");
-                    new BookLib();
+                    new TopMenu();
+                    dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "Please try again.");
                 }
@@ -114,6 +119,8 @@ public class LoginPage extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JOptionPane.showMessageDialog(null, "Sign-up functionality goes here.");
+                new SignupPageGui().setVisible(true);
+                dispose();
             }
         });
     }
@@ -155,7 +162,6 @@ public class LoginPage extends JFrame {
         }
     }
 }
-
 
 
 

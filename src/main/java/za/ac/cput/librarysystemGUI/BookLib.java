@@ -1,4 +1,4 @@
-package za.ac.cput.librarysystem;
+package za.ac.cput.librarysystemGui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,10 +7,12 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookLib implements ActionListener {
+public class BookLib extends JFrame implements ActionListener {
+
     JFrame frame;
     JButton accountbtn, checkoutbtn, topMenubtn;
     List<Book> books;
@@ -50,8 +52,9 @@ public class BookLib implements ActionListener {
         JPanel bookPanel = new JPanel(new GridLayout(2, 4, 10, 10));
 
         for (Book book : books) {
-            JPanel bookPanelItem = new JPanel(new BorderLayout());          
-            JLabel bookPic = new JLabel(new ImageIcon(book.getImagePath()));
+            JPanel bookPanelItem = new JPanel(new BorderLayout());
+            JLabel bookPic = new JLabel(book.getImageIcon());
+
             bookPanelItem.add(bookPic, BorderLayout.CENTER);
 
             JPanel textAndButtonPanel = new JPanel();
@@ -61,7 +64,6 @@ public class BookLib implements ActionListener {
             JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
             JButton trolleyBtn = new JButton(new ImageIcon("add.png"));
-            
 
             bookName.setAlignmentX(Component.CENTER_ALIGNMENT);
             bookAuth.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -109,15 +111,20 @@ public class BookLib implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == accountbtn) {
             new AccountPageGui();
+            frame.dispose();
+
         } else if (e.getSource() == checkoutbtn) {
             JOptionPane.showMessageDialog(null, "Checked out successfully");
+            new CheckoutPage();
+            frame.dispose();
         } else if (e.getSource() == topMenubtn) {
             JOptionPane.showMessageDialog(null, "Back to top menu");
+            frame.dispose();
         }
     }
-   
-    // Inner class for Book
+
     private static class Book {
+
         private String name;
         private String author;
         private String imagePath;
@@ -136,12 +143,15 @@ public class BookLib implements ActionListener {
             return author;
         }
 
-        public String getImagePath() {
-            return imagePath;
-        }
+        public ImageIcon getImageIcon() {
+    URL resourceURL = getClass().getClassLoader().getResource("res/" + imagePath);
+    if (resourceURL == null) {
+        System.err.println("Image not found: Resources/" + imagePath);
+        return null; // Or return a default image or placeholder
     }
+    return new ImageIcon(resourceURL);
 }
 
+    }
 
-
-
+}

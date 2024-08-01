@@ -1,5 +1,4 @@
-
-package za.ac.cput.librarysystem;
+package za.ac.cput.librarysystemGui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -22,8 +21,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+public class AudioBook extends JFrame implements ActionListener {
 
-public class AudioBook implements ActionListener{
     JFrame frame;
     JButton accountbtn, checkoutbtn, topMenubtn;
     List<Book> books;
@@ -121,15 +120,21 @@ public class AudioBook implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == accountbtn) {
             new AccountPageGui();
+            frame.dispose();
         } else if (e.getSource() == checkoutbtn) {
             JOptionPane.showMessageDialog(null, "Checked out successfully");
+            new CheckoutPage();
+            frame.dispose();
         } else if (e.getSource() == topMenubtn) {
             JOptionPane.showMessageDialog(null, "Back to top menu");
+            new TopMenu();
+            frame.dispose();
         }
     }
 
     // Inner class for Book
     private static class Book {
+
         private String name;
         private String author;
         private String imagePath;
