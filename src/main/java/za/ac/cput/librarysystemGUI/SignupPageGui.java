@@ -176,11 +176,5 @@ public class SignupPageGui extends JFrame {
         
     }
     
-    private void openLoginPage() {
-
-        JOptionPane.showMessageDialog(this, "Redirecting to login page...", "Login", JOptionPane.INFORMATION_MESSAGE);
-       
-    }
-    
     
 }
