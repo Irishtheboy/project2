@@ -50,7 +50,7 @@ public class TopMenu extends JFrame implements ActionListener {
 
         // Set up the main frame
         this.setVisible(true);
-        this.setSize(200, 100);
+        this.setSize(400, 100);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         pnlCenter.setLayout(new GridLayout(1, 2));

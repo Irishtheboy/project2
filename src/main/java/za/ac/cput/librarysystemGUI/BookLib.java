@@ -11,25 +11,28 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class BookLib extends JFrame implements ActionListener {
 
-    JFrame frame;
-    JButton accountbtn, checkoutbtn, topMenubtn;
-    List<Book> books;
+    private JButton accountbtn, checkoutbtn, topMenubtn;
+    private List<Book> books;
 
     public BookLib() {
         books = loadBooksFromFile("books.txt");
 
-        frame = new JFrame("Book Library");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(880, 600);
+        setTitle("Book Library");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(880, 600);
+
+        createMenuBar();
 
         JLabel title = new JLabel("BOOKS", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
-        frame.add(title, BorderLayout.NORTH);
+        add(title, BorderLayout.NORTH);
 
         JPanel bookPanel = createBookPanel();
-        frame.add(bookPanel, BorderLayout.CENTER);
+        add(bookPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new FlowLayout());
         accountbtn = new JButton("Account");
@@ -44,8 +47,32 @@ public class BookLib extends JFrame implements ActionListener {
         checkoutbtn.addActionListener(this);
         topMenubtn.addActionListener(this);
 
-        frame.add(bottomPanel, BorderLayout.SOUTH);
-        frame.setVisible(true);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); 
+            }
+        });
+        fileMenu.add(exitItem);
+
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem aboutItem = new JMenuItem("About");
+        helpMenu.add(aboutItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+
+        setJMenuBar(menuBar);
     }
 
     private JPanel createBookPanel() {
@@ -57,21 +84,24 @@ public class BookLib extends JFrame implements ActionListener {
 
             bookPanelItem.add(bookPic, BorderLayout.CENTER);
 
-            JPanel textAndButtonPanel = new JPanel();
-            textAndButtonPanel.setLayout(new BoxLayout(textAndButtonPanel, BoxLayout.Y_AXIS));
-            textAndButtonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JPanel textAndButtonPanel = new JPanel(new BorderLayout());
 
             JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
             JButton trolleyBtn = new JButton(new ImageIcon("add.png"));
 
-            bookName.setAlignmentX(Component.CENTER_ALIGNMENT);
-            bookAuth.setAlignmentX(Component.CENTER_ALIGNMENT);
-            trolleyBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JPanel namePanel = new JPanel(new BorderLayout());
+            namePanel.add(bookName, BorderLayout.CENTER);
 
-            textAndButtonPanel.add(bookName);
-            textAndButtonPanel.add(bookAuth);
-            textAndButtonPanel.add(trolleyBtn);
+            JPanel authorPanel = new JPanel(new BorderLayout());
+            authorPanel.add(bookAuth, BorderLayout.CENTER);
+
+            JPanel buttonPanel = new JPanel(new BorderLayout());
+            buttonPanel.add(trolleyBtn, BorderLayout.CENTER);
+
+            textAndButtonPanel.add(namePanel, BorderLayout.NORTH);
+            textAndButtonPanel.add(authorPanel, BorderLayout.CENTER);
+            textAndButtonPanel.add(buttonPanel, BorderLayout.SOUTH);
 
             bookPanelItem.add(textAndButtonPanel, BorderLayout.SOUTH);
             bookPanel.add(bookPanelItem);
@@ -96,30 +126,19 @@ public class BookLib extends JFrame implements ActionListener {
         return bookList;
     }
 
-    private void openNewFrame() {
-        JFrame newFrame = new JFrame("New Window");
-        newFrame.setSize(400, 300);
-        newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JLabel label = new JLabel("This is a new window", SwingConstants.CENTER);
-        newFrame.add(label);
-
-        newFrame.setVisible(true);
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == accountbtn) {
             new AccountPageGui();
-            frame.dispose();
-
+            dispose();
         } else if (e.getSource() == checkoutbtn) {
             JOptionPane.showMessageDialog(null, "Checked out successfully");
             new CheckoutPage();
-            frame.dispose();
+            dispose();
         } else if (e.getSource() == topMenubtn) {
             JOptionPane.showMessageDialog(null, "Back to top menu");
-            frame.dispose();
+            // Optionally close the current frame
+            dispose();
         }
     }
 
@@ -144,14 +163,12 @@ public class BookLib extends JFrame implements ActionListener {
         }
 
         public ImageIcon getImageIcon() {
-    URL resourceURL = getClass().getClassLoader().getResource("res/" + imagePath);
-    if (resourceURL == null) {
-        System.err.println("Image not found: Resources/" + imagePath);
-        return null; // Or return a default image or placeholder
+            URL resourceURL = getClass().getClassLoader().getResource("res/" + imagePath);
+            if (resourceURL == null) {
+                System.err.println("Image not found: res/" + imagePath);
+                return null; // Or return a default image or placeholder
+            }
+            return new ImageIcon(resourceURL);
+        }
     }
-    return new ImageIcon(resourceURL);
-}
-
-    }
-
 }
