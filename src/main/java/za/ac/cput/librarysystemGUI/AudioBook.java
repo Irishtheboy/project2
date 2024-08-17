@@ -1,12 +1,10 @@
 package za.ac.cput.librarysystemGui;
 
+import ac.za.cput.librarysystem.domain.Book;
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -14,19 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-
+import javax.swing.*;
 
 public class AudioBook extends JFrame implements ActionListener {
 
@@ -72,12 +58,7 @@ public class AudioBook extends JFrame implements ActionListener {
         
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0); 
-            }
-        });
+        exitItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitItem);
 
         JMenu helpMenu = new JMenu("Help");
@@ -123,6 +104,7 @@ public class AudioBook extends JFrame implements ActionListener {
         }
         return bookPanel;
     }
+
     private List<Book> loadBooksFromFile(String filename) {
         List<Book> bookList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -153,28 +135,5 @@ public class AudioBook extends JFrame implements ActionListener {
             dispose();
         }
     }
-    private static class Book {
-
-        private String name;
-        private String author;
-        private String imagePath;
-
-        public Book(String name, String author, String imagePath) {
-            this.name = name;
-            this.author = author;
-            this.imagePath = imagePath;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAuthor() {
-            return author;
-        }
-
-        public String getImagePath() {
-            return imagePath;
-        }
-    }
 }
+
