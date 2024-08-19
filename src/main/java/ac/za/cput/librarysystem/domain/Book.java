@@ -10,14 +10,20 @@ package ac.za.cput.librarysystem.domain;
  * @author Sabura11
  */
 public class Book {
+    private int id;
     private String name;
     private String author;
     private String imagePath;
 
     public Book(String name, String author, String imagePath) {
+        this.id = id;
         this.name = name;
         this.author = author;
         this.imagePath = imagePath;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -31,5 +37,4 @@ public class Book {
     public String getImagePath() {
         return imagePath;
     }
-    
 }

@@ -1,27 +1,17 @@
 package za.ac.cput.librarysystemGui;
-
+import ac.za.cput.librarysystem.dao.UserDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import javax.imageio.ImageIO;
+import za.ac.cput.librarysystemGui.AudioBook.UserSession;
 
 public class LoginPage extends JFrame {
 
-    private JPanel ePanel, wPanel, sPanel;
+    private JPanel mainPanel;
     private JLabel userLabel, passwordLabel, signUpLabel, headingLabel;
     private JTextField userText;
     private JPasswordField passwordText;
     private JButton btnLogin;
-    private BufferedImage backgroundImage;
-    private Map<String, String> credentials;
-    
-    SignupPageGui s = new SignupPageGui();
-    
-    
 
     public LoginPage() {
         initializeComponents();
@@ -31,22 +21,9 @@ public class LoginPage extends JFrame {
     }
 
     private void initializeComponents() {
-        // Load the background image
-        try {
-            backgroundImage = ImageIO.read(getClass().getResourceAsStream(""));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Load user credentials from file
-        credentials = loadCredentialsFromFile("users.txt");
-
         setTitle("User Login");
 
-        wPanel = new JPanel();
-        ePanel = new JPanel();
-        sPanel = new JPanel();
-
+        mainPanel = new JPanel();
         headingLabel = new JLabel("Login", JLabel.CENTER);
         headingLabel.setFont(new Font("Arial", Font.BOLD, 20));
         headingLabel.setForeground(Color.BLACK);
@@ -69,34 +46,33 @@ public class LoginPage extends JFrame {
     }
 
     private void setupLayout() {
-        BackgroundPanel backgroundPanel = new BackgroundPanel();
-        backgroundPanel.setLayout(null);
-        setContentPane(backgroundPanel);
+        setLayout(new BorderLayout());
 
-        wPanel.setLayout(new GridLayout(2, 1, 10, 10));
-        wPanel.setOpaque(false);
-        ePanel.setLayout(new GridLayout(2, 1, 10, 10));
-        ePanel.setOpaque(false);
-        sPanel.setLayout(new FlowLayout());
-        sPanel.setOpaque(false);
+        mainPanel.setLayout(null);
+        add(mainPanel, BorderLayout.CENTER);
 
         headingLabel.setBounds(0, 10, 400, 30);
-        backgroundPanel.add(headingLabel);
+        mainPanel.add(headingLabel);
 
         userLabel.setBounds(10, 60, 100, 25);
         userText.setBounds(120, 60, 180, 25);
-        backgroundPanel.add(userLabel);
-        backgroundPanel.add(userText);
+        mainPanel.add(userLabel);
+        mainPanel.add(userText);
 
         passwordLabel.setBounds(10, 100, 100, 25);
         passwordText.setBounds(120, 100, 180, 25);
-        backgroundPanel.add(passwordLabel);
-        backgroundPanel.add(passwordText);
+        mainPanel.add(passwordLabel);
+        mainPanel.add(passwordText);
 
-        sPanel.setBounds(10, 150, 350, 70);
-        sPanel.add(btnLogin);
-        sPanel.add(signUpLabel);
-        backgroundPanel.add(sPanel);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBounds(10, 150, 350, 70);
+        buttonPanel.add(btnLogin);
+        mainPanel.add(buttonPanel);
+
+        JPanel signUpPanel = new JPanel(new FlowLayout());
+        signUpPanel.setBounds(10, 220, 350, 30);
+        signUpPanel.add(signUpLabel);
+        mainPanel.add(signUpPanel);
     }
 
     private void addListeners() {
@@ -105,12 +81,15 @@ public class LoginPage extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String username = userText.getText();
                 String password = new String(passwordText.getPassword());
-                if (isValidLogin(username, password)) {
+
+                UserDAO userDAO = new UserDAO();
+                if (userDAO.validateLogin(username, password)) {
                     JOptionPane.showMessageDialog(null, "Welcome!");
-                    new TopMenu();
+                    new TopMenu().setVisible(true);
+                    UserSession.setLoggedInUsername(username);
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Please try again.");
+                    JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -118,7 +97,6 @@ public class LoginPage extends JFrame {
         signUpLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JOptionPane.showMessageDialog(null, "Sign-up functionality goes here.");
                 new SignupPageGui().setVisible(true);
                 dispose();
             }
@@ -126,43 +104,13 @@ public class LoginPage extends JFrame {
     }
 
     private void finalizeLayout() {
-        setSize(400, 280);
+        setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Center the window on the screen
         setVisible(true);
     }
 
-    private boolean isValidLogin(String username, String password) {
-        return credentials.containsKey(username) && credentials.get(username).equals(password);
-    }
-
-    private Map<String, String> loadCredentialsFromFile(String filename) {
-        Map<String, String> credentials = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] details = line.split(",");
-                if (details.length == 2) {
-                    credentials.put(details[0], details[1]);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return credentials;
-    }
-
-    // Inner class for background panel
-    class BackgroundPanel extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (backgroundImage != null) {
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-            }
-        }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new LoginPage().setVisible(true));
     }
 }
-
-
-
-

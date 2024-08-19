@@ -1,24 +1,7 @@
-Sat Aug 17 19:36:34 SAST 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+Mon Aug 19 14:06:19 SAST 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Sat Aug 17 19:36:34 SAST 2024:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0191-6169-905e-000067e4fefd 
-on database directory C:\Users\Sabura11\Documents\Git\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
-Loaded from file:/C:/Program%20Files/Java/jdk-17/Db/db-derby-10.14.2.0-bin/lib/derby.jar
-java.vendor=Oracle Corporation
-java.runtime.version=17.0.10+11-LTS-240
-user.dir=C:\Program Files\Java\jdk-17\Db\db-derby-10.14.2.0-bin
-os.name=Windows 10
-os.arch=amd64
-os.version=10.0
-derby.system.home=C:\Users\Sabura11\Documents\Git\project2\Database
-Database Class Loader started - derby.database.classpath=''
-----------------------------------------------------------------
-Sat Aug 17 19:36:35 SAST 2024:
-Shutting down instance a816c00e-0191-6169-905e-000067e4fefd on database directory C:\Users\Sabura11\Documents\Git\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
-Sat Aug 17 19:36:35 SAST 2024 Thread[DRDAConnThread_3,5,main] (DATABASE = LibraryDatabse), (DRDAID = {2}), Database 'LibraryDatabse' shutdown.
-----------------------------------------------------------------
-Sat Aug 17 19:51:25 SAST 2024:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance 6ede40af-0191-6169-905e-000067e4fefd 
+Mon Aug 19 14:06:19 SAST 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0191-6a87-f020-000067e4fefd 
 on database directory C:\Users\Sabura11\Documents\Git\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
 Loaded from file:/C:/Program%20Files/Java/jdk-17/Db/db-derby-10.14.2.0-bin/lib/derby.jar
 java.vendor=Oracle Corporation

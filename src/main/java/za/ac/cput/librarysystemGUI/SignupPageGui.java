@@ -4,6 +4,7 @@
  */
 package za.ac.cput.librarysystemGui;
 
+import ac.za.cput.librarysystem.dao.UserDAO;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
@@ -137,36 +138,34 @@ public class SignupPageGui extends JFrame {
         });
     }
     
-    private void processSignUp() {
-        try {
-            String username = usernameField.getText();
-            String email = emailField.getText();
-            String phone = phoneField.getText();
-            String password = new String(passwordField.getPassword());
-            
+private void processSignUp() {
+    try {
+        String username = usernameField.getText();
+        String email = emailField.getText();
+        String phone = phoneField.getText();
+        String password = new String(passwordField.getPassword());
+        
+        // Validation is already done here
 
-            if (username.isEmpty() || password.isEmpty() || email.isEmpty() || phone.isEmpty()) {
-                throw new IllegalArgumentException("All fields must be filled.");
-            }
-
-            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                throw new IllegalArgumentException("Invalid email format.");
-            }
-
-            if (!phone.matches("\\d{10}")) {
-                throw new IllegalArgumentException("Phone number must be 10 digits.");
-            }
-
-            
-            
+        UserDAO userDAO = new UserDAO();
+        boolean signUpSuccess = userDAO.signUpUser(username, email, phone, password);
+        
+        if (signUpSuccess) {
             JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
-            } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "An unexpected error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
+            new LoginPage().setVisible(true);  // Redirect to login page
+            dispose();  // Close the sign-up page
+        } else {
+            JOptionPane.showMessageDialog(this, "Sign-up failed.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+    } catch (IllegalArgumentException ex) {
+        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "An unexpected error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
     }
+}
+
     
     private void clearFields() {
         usernameField.setText("");

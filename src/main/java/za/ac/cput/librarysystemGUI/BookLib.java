@@ -137,7 +137,7 @@ public class BookLib extends JFrame implements ActionListener {
             dispose();
         } else if (e.getSource() == topMenubtn) {
             JOptionPane.showMessageDialog(null, "Back to top menu");
-            // Optionally close the current frame
+            
             dispose();
         }
     }

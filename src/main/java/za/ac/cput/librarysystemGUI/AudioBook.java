@@ -1,5 +1,6 @@
 package za.ac.cput.librarysystemGui;
 
+import ac.za.cput.librarysystem.dao.UserDAO;
 import ac.za.cput.librarysystem.domain.Book;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -13,11 +14,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import static za.ac.cput.librarysystemGui.AudioBook.UserSession.getLoggedInUsername;
 
 public class AudioBook extends JFrame implements ActionListener {
 
     private JButton accountbtn, checkoutbtn, topMenubtn;
+    private JLabel loggedInUserLabel, rentalCountLabel;
     private List<Book> books;
+    private int rentalCount = 0; // To keep track of the number of books rented
 
     public AudioBook() {
         books = loadBooksFromFile("books.txt");
@@ -27,10 +31,28 @@ public class AudioBook extends JFrame implements ActionListener {
         setSize(880, 600);
 
         createMenuBar();
-        
+
         JLabel title = new JLabel("AUDIO BOOKS", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         add(title, BorderLayout.NORTH);
+
+        // Create a panel for the logged-in username label
+        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        loggedInUserLabel = new JLabel("Logged in as: " + UserSession.getLoggedInUsername());
+        loggedInUserLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        userPanel.add(loggedInUserLabel);
+
+        // Create a panel for the rental count label
+        JPanel rentalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rentalCountLabel = new JLabel("Books rented: " + rentalCount);
+        rentalCountLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        rentalPanel.add(rentalCountLabel);
+
+        // Add both panels to the frame
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(userPanel, BorderLayout.WEST);
+        topPanel.add(rentalPanel, BorderLayout.EAST);
+        add(topPanel, BorderLayout.NORTH);
 
         JPanel bookPanel = createBookPanel();
         add(bookPanel, BorderLayout.CENTER);
@@ -55,7 +77,7 @@ public class AudioBook extends JFrame implements ActionListener {
 
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        
+
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(e -> System.exit(0));
@@ -67,7 +89,7 @@ public class AudioBook extends JFrame implements ActionListener {
 
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-        
+
         setJMenuBar(menuBar);
     }
 
@@ -84,7 +106,7 @@ public class AudioBook extends JFrame implements ActionListener {
 
             JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
-            JButton trolleyBtn = new JButton(new ImageIcon("add.png"));
+            JButton rentBtn = new JButton("Rent");
 
             JPanel namePanel = new JPanel(new BorderLayout());
             namePanel.add(bookName, BorderLayout.CENTER);
@@ -93,7 +115,7 @@ public class AudioBook extends JFrame implements ActionListener {
             authorPanel.add(bookAuth, BorderLayout.CENTER);
 
             JPanel buttonPanel = new JPanel(new BorderLayout());
-            buttonPanel.add(trolleyBtn, BorderLayout.CENTER);
+            buttonPanel.add(rentBtn, BorderLayout.CENTER);
 
             textAndButtonPanel.add(namePanel, BorderLayout.NORTH);
             textAndButtonPanel.add(authorPanel, BorderLayout.CENTER);
@@ -101,6 +123,27 @@ public class AudioBook extends JFrame implements ActionListener {
 
             bookPanelItem.add(textAndButtonPanel, BorderLayout.SOUTH);
             bookPanel.add(bookPanelItem);
+
+            // Add ActionListener to the rent button
+            rentBtn.addActionListener(e -> {
+                String username = UserSession.getLoggedInUsername(); // Retrieve the logged-in username
+                UserDAO userDAO = new UserDAO();
+                int userId = userDAO.getUserId(username);
+                int bookId = book.getId();
+
+                if (userId != -1) {
+                    boolean success = userDAO.rentBook(userId, bookId);
+                    if (success) {
+                        rentalCount++;
+                        rentalCountLabel.setText("Books rented: " + rentalCount);
+                        JOptionPane.showMessageDialog(this, "Book rented successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to rent book.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "User not found.");
+                }
+            });
         }
         return bookPanel;
     }
@@ -135,5 +178,17 @@ public class AudioBook extends JFrame implements ActionListener {
             dispose();
         }
     }
-}
 
+    public static class UserSession {
+
+        private static String loggedInUsername;
+
+        public static String getLoggedInUsername() {
+            return loggedInUsername;
+        }
+
+        public static void setLoggedInUsername(String username) {
+            loggedInUsername = username;
+        }
+    }
+}
