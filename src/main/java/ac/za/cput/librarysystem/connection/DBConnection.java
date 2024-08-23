@@ -13,6 +13,7 @@ import java.sql.SQLException;
  * @author Sabura11
  */
 public class DBConnection {
+    //Franco Lukhele & Anita
     public static Connection derbyConnection() throws SQLException{
      String dbURL = "jdbc:derby://localhost:1527/LibraryDatabse";
         String username = "administrator";

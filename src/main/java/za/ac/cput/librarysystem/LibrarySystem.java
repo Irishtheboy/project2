@@ -15,11 +15,11 @@ import za.ac.cput.librarysystemGui.LoginPage;
 public class LibrarySystem {
 
     public static void main(String[] args) {
-// Use SwingUtilities to ensure GUI updates are performed on the Event Dispatch Thread
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // Instantiate and display the login page
+                
                 new LoginPage();
             }
         });

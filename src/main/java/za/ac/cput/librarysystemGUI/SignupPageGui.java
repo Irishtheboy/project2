@@ -138,6 +138,7 @@ public class SignupPageGui extends JFrame {
         });
     }
     
+    // Franco, Oratile, Naqeebah and mfana
 private void processSignUp() {
     try {
         String username = usernameField.getText();
@@ -145,7 +146,7 @@ private void processSignUp() {
         String phone = phoneField.getText();
         String password = new String(passwordField.getPassword());
         
-        // Validation is already done here
+        
 
         UserDAO userDAO = new UserDAO();
         boolean signUpSuccess = userDAO.signUpUser(username, email, phone, password);
@@ -153,8 +154,9 @@ private void processSignUp() {
         if (signUpSuccess) {
             JOptionPane.showMessageDialog(this, "Sign-up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
-            new LoginPage().setVisible(true);  // Redirect to login page
-            dispose();  // Close the sign-up page
+            System.out.println("The Database has captured all the details, you can check in the table");
+            new LoginPage().setVisible(true);  
+            dispose();  
         } else {
             JOptionPane.showMessageDialog(this, "Sign-up failed.", "Error", JOptionPane.ERROR_MESSAGE);
         }

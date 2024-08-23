@@ -1,7 +1,9 @@
+package ac.za.cput.librarysystem.domain;
+
 
 /**
  *
- * @author pholo
+ * @author pholo and Franco And Naqeebah
  */
 public class User {
     public String user_Name;

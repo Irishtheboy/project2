@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
-import static za.ac.cput.librarysystemGui.AudioBook.UserSession.getLoggedInUsername;
 
 public class AudioBook extends JFrame implements ActionListener {
 
@@ -93,60 +92,64 @@ public class AudioBook extends JFrame implements ActionListener {
         setJMenuBar(menuBar);
     }
 
-    private JPanel createBookPanel() {
-        JPanel bookPanel = new JPanel(new GridLayout(2, 4, 10, 10));
+private JPanel createBookPanel() {
+    JPanel bookPanel = new JPanel(new GridLayout(2, 4, 10, 10));
 
-        for (Book book : books) {
-            JPanel bookPanelItem = new JPanel(new BorderLayout());
-            JLabel bookPic = new JLabel(new ImageIcon(book.getImagePath()));
+    for (Book book : books) {
+        JPanel bookPanelItem = new JPanel(new BorderLayout());
+        JLabel bookPic = new JLabel(new ImageIcon(book.getImagePath()));
 
-            bookPanelItem.add(bookPic, BorderLayout.CENTER);
+        bookPanelItem.add(bookPic, BorderLayout.CENTER);
 
-            JPanel textAndButtonPanel = new JPanel(new BorderLayout());
+        JPanel textAndButtonPanel = new JPanel(new BorderLayout());
 
-            JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
-            JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
-            JButton rentBtn = new JButton("Rent");
+        JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
+        JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
+        JButton rentBtn = new JButton("Rent");
 
-            JPanel namePanel = new JPanel(new BorderLayout());
-            namePanel.add(bookName, BorderLayout.CENTER);
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(bookName, BorderLayout.CENTER);
 
-            JPanel authorPanel = new JPanel(new BorderLayout());
-            authorPanel.add(bookAuth, BorderLayout.CENTER);
+        JPanel authorPanel = new JPanel(new BorderLayout());
+        authorPanel.add(bookAuth, BorderLayout.CENTER);
 
-            JPanel buttonPanel = new JPanel(new BorderLayout());
-            buttonPanel.add(rentBtn, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        buttonPanel.add(rentBtn, BorderLayout.CENTER);
 
-            textAndButtonPanel.add(namePanel, BorderLayout.NORTH);
-            textAndButtonPanel.add(authorPanel, BorderLayout.CENTER);
-            textAndButtonPanel.add(buttonPanel, BorderLayout.SOUTH);
+        textAndButtonPanel.add(namePanel, BorderLayout.NORTH);
+        textAndButtonPanel.add(authorPanel, BorderLayout.CENTER);
+        textAndButtonPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-            bookPanelItem.add(textAndButtonPanel, BorderLayout.SOUTH);
-            bookPanel.add(bookPanelItem);
+        bookPanelItem.add(textAndButtonPanel, BorderLayout.SOUTH);
+        bookPanel.add(bookPanelItem);
 
-            // Add ActionListener to the rent button
-            rentBtn.addActionListener(e -> {
-                String username = UserSession.getLoggedInUsername(); // Retrieve the logged-in username
-                UserDAO userDAO = new UserDAO();
-                int userId = userDAO.getUserId(username);
-                int bookId = book.getId();
+//     rentBtn.addActionListener(e -> {
+//    String username = UserSession.getLoggedInUsername();
+//    UserDAO userDAO = new UserDAO();
+//    String user = userDAO.getUserUsername(username); // Get username
+//
+//    if (user != null) {
+//        int bookId = book.getId();
+//        if (userDAO.isBookAvailable(bookId)) {
+//            boolean success = userDAO.rentBookByUsername(user, bookId); // Update to use username
+//            if (success) {
+//                rentalCount++;
+//                rentalCountLabel.setText("Books rented: " + rentalCount);
+//                JOptionPane.showMessageDialog(this, "Book rented successfully!");
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Failed to rent book.");
+//            }
+//        } else {
+//            JOptionPane.showMessageDialog(this, "This book is already rented out.");
+//        }
+//    } else {
+//        JOptionPane.showMessageDialog(this, "User not found.");
+//    }
+//});
 
-                if (userId != -1) {
-                    boolean success = userDAO.rentBook(userId, bookId);
-                    if (success) {
-                        rentalCount++;
-                        rentalCountLabel.setText("Books rented: " + rentalCount);
-                        JOptionPane.showMessageDialog(this, "Book rented successfully!");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Failed to rent book.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "User not found.");
-                }
-            });
-        }
-        return bookPanel;
     }
+    return bookPanel;
+}
 
     private List<Book> loadBooksFromFile(String filename) {
         List<Book> bookList = new ArrayList<>();

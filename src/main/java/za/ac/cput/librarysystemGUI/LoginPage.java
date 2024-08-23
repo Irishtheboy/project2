@@ -75,6 +75,7 @@ public class LoginPage extends JFrame {
         mainPanel.add(signUpPanel);
     }
 
+    // Teyanah & Franco
     private void addListeners() {
         btnLogin.addActionListener(new ActionListener() {
             @Override
@@ -85,6 +86,7 @@ public class LoginPage extends JFrame {
                 UserDAO userDAO = new UserDAO();
                 if (userDAO.validateLogin(username, password)) {
                     JOptionPane.showMessageDialog(null, "Welcome!");
+                    System.out.println("The User has validated and compared to the database table....");
                     new TopMenu().setVisible(true);
                     UserSession.setLoggedInUsername(username);
                     dispose();
@@ -106,7 +108,7 @@ public class LoginPage extends JFrame {
     private void finalizeLayout() {
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Center the window on the screen
+        setLocationRelativeTo(null); 
         setVisible(true);
     }
 
