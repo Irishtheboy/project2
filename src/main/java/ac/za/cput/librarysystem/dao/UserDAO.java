@@ -25,35 +25,50 @@ public class UserDAO {
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
-            
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error signing up user: " + e.getMessage());
             return false;
         }
-        
+
     }
 
     //Teyana & Franco & Mfana
+    public boolean signUpUser(String username, String email, String phone, String password, String role) {
+        String insertUserSQL = "INSERT INTO USERS (username, email, phone, password, role) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertUserSQL)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, email);
+            pstmt.setString(3, phone);
+            pstmt.setString(4, password);
+            pstmt.setString(5, role);  // Set the role parameter
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error signing up user: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean validateLogin(String username, String password) {
-        String query = "SELECT username FROM USERS WHERE CAST(username AS VARCHAR(255)) = ? AND CAST(password AS VARCHAR(255)) = ?";
+        String query = "SELECT username FROM USERS WHERE username = ? AND password = ?";  // Simplified query
 
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
-
             pstmt.setString(1, username);
             pstmt.setString(2, password);
 
             ResultSet rs = pstmt.executeQuery();
-            return rs.next();
-
+            return rs.next();  // Returns true if a matching user is found
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error logging in: " + e.getMessage());
             return false;
         }
     }
-    
-    //Naqeebah code
 
+    //Naqeebah code
 //    public boolean rentBook(int userId, int bookId) {
 //        String insertRentalSQL = "INSERT INTO Rentals (user_id, book_id, rental_date) VALUES (?, ?, CURRENT_DATE)";
 //
@@ -149,9 +164,5 @@ public class UserDAO {
 //            return false;
 //        }
 //    }
-    
     //Franco Code Piece
-    
-    
-
 }
