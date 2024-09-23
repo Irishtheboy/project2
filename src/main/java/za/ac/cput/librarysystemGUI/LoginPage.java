@@ -1,8 +1,10 @@
 package za.ac.cput.librarysystemGui;
+
 import ac.za.cput.librarysystem.dao.UserDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import za.ac.cput.librarysystemGUI.AdminDashBoard;
 import za.ac.cput.librarysystemGui.AudioBook.UserSession;
 
 public class LoginPage extends JFrame {
@@ -84,11 +86,21 @@ public class LoginPage extends JFrame {
                 String password = new String(passwordText.getPassword());
 
                 UserDAO userDAO = new UserDAO();
-                if (userDAO.validateLogin(username, password)) {
+                String role = userDAO.validateLogin(username, password);
+
+                if (role != null) {
                     JOptionPane.showMessageDialog(null, "Welcome!");
-                    System.out.println("The User has validated and compared to the database table....");
-                    new TopMenu().setVisible(true);
-                    UserSession.setLoggedInUsername(username);
+
+                    if ("admin".equalsIgnoreCase(role)) {
+                        System.out.println("Admin logged in");
+                        AdminDashBoard adminDashboard = new AdminDashBoard();
+                        adminDashboard.setVisible(true);  // Make the admin dashboard visible
+                    } else {
+                        System.out.println("User logged in");
+                        new TopMenu().setVisible(true);  // Redirect to regular user page
+                    }
+
+                    UserSession.setLoggedInUsername(username);  // Set the logged-in user session
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
@@ -108,7 +120,7 @@ public class LoginPage extends JFrame {
     private void finalizeLayout() {
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
