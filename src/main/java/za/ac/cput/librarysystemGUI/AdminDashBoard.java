@@ -87,6 +87,8 @@ public class AdminDashBoard extends JFrame {
         // Add action listeners
         btnAddBook.addActionListener(e -> showAddBookDialog());
         btnDeleteBook.addActionListener(e -> deleteSelectedBook());
+        btnAddUser.addActionListener(e -> showAddUserDialog());
+        btnDeleteUser.addActionListener(e -> deleteSelectedUser());
     }
 
     private void setTableColumnWidths(JTable table) {
@@ -169,6 +171,44 @@ public class AdminDashBoard extends JFrame {
         }
     }
 
+    private void showAddUserDialog() {
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        panel.add(new JLabel("Username:"));
+        JTextField usernameField = new JTextField();
+        panel.add(usernameField);
+        
+        panel.add(new JLabel("Email:"));
+        JTextField emailField = new JTextField();
+        panel.add(emailField);
+        
+        panel.add(new JLabel("Role:"));
+        JTextField roleField = new JTextField();
+        panel.add(roleField);
+        
+        int result = JOptionPane.showConfirmDialog(this, panel, "Add User", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String username = usernameField.getText();
+            String email = emailField.getText();
+            String role = roleField.getText();
+            userDAO.addUser(username, email, role); // Add the user to the database
+            populateUsersTable();  // Refresh the user table
+        }
+    }
+
+    private void deleteSelectedUser() {
+        int selectedRow = usersTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int userId = (int) usersTable.getValueAt(selectedRow, 0); // Assuming user ID is in the first column
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                userDAO.deleteUser(userId); // Call the method to delete the user
+                populateUsersTable(); // Refresh the user table
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a user to delete.");
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             AdminDashBoard adminDashboard = new AdminDashBoard();
@@ -176,5 +216,3 @@ public class AdminDashBoard extends JFrame {
         });
     }
 }
-
-

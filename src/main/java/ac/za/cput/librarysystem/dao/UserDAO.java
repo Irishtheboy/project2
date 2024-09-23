@@ -92,5 +92,33 @@ public class UserDAO {
         }
         return usersList;
     }
+    public void addUser(String username, String email, String role) {
+    String query = "INSERT INTO USERS (username, email, role) VALUES (?, ?, ?)";
+    
+    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setString(1, username);
+        pstmt.setString(2, email);
+        pstmt.setString(3, role);
+        pstmt.executeUpdate();
+        JOptionPane.showMessageDialog(null, "User added successfully.");
+    } catch (SQLException e) {
+        e.printStackTrace();  // Print stack trace for debugging
+        JOptionPane.showMessageDialog(null, "Error adding user: " + e.getMessage());
+    }
+}
+
+public void deleteUser(int userId) {
+    String query = "DELETE FROM USERS WHERE userid = ?";
+    
+    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setInt(1, userId);
+        pstmt.executeUpdate();
+        JOptionPane.showMessageDialog(null, "User deleted successfully.");
+    } catch (SQLException e) {
+        e.printStackTrace();  // Print stack trace for debugging
+        JOptionPane.showMessageDialog(null, "Error deleting user: " + e.getMessage());
+    }
+}
+
 
 }
