@@ -73,4 +73,24 @@ public class UserDAO {
         }
     }
 
+    public List<Object[]> getAllUsers() {
+        String query = "SELECT userid, username, email, role FROM USERS";
+        List<Object[]> usersList = new ArrayList<>();
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] user = new Object[4];
+                user[0] = rs.getInt("userid");
+                user[1] = rs.getString("username");
+                user[2] = rs.getString("email");
+                user[3] = rs.getString("role");
+                usersList.add(user);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching users: " + e.getMessage());
+        }
+        return usersList;
+    }
+
 }
