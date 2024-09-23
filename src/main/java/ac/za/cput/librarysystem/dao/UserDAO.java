@@ -120,5 +120,43 @@ public void deleteUser(int userId) {
     }
 }
 
+public String getUserUsername(String username) {
+    String query = "SELECT username FROM USERS WHERE username = ?";
+    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setString(1, username);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getString("username");
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error fetching user: " + e.getMessage());
+    }
+    return null; // User not found
+}
+public boolean isBookAvailable(int bookId) {
+    String query = "SELECT COUNT(*) FROM RENTS WHERE book_id = ? AND return_date IS NULL";
+    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setInt(1, bookId);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) == 0; // Book is available if no rentals found
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error checking book availability: " + e.getMessage());
+    }
+    return false; // Book is not available
+}
+public boolean rentBookByUsername(String username, int bookId) {
+    String insertRentSQL = "INSERT INTO RENTS (username, book_id, rental_date) VALUES (?, ?, CURRENT_DATE)";
+    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertRentSQL)) {
+        pstmt.setString(1, username);
+        pstmt.setInt(2, bookId);
+        int rowsAffected = pstmt.executeUpdate();
+        return rowsAffected > 0; // Return true if rental was successful
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error renting book: " + e.getMessage());
+        return false; // Rental failed
+    }
+}
 
 }
