@@ -351,7 +351,10 @@ public class AudioBook extends JFrame implements ActionListener {
 
     private void rentBook(int bookId, int selectedRow) {
         int userId = UserSession.getLoggedInUserId(); // Get the logged-in user's ID
-
+        System.out.println("User ID: " + userId);
+        
+        
+        
         if (bookDAO.isBookAvailable(bookId)) {
             boolean success = bookDAO.rentBook(userId, bookId); // Pass both user ID and book ID to log the rental
             if (success) {
