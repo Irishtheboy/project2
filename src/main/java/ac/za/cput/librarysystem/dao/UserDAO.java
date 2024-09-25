@@ -147,7 +147,7 @@ public boolean isBookAvailable(int bookId) {
     return false; // Book is not available
 }
 public boolean rentBookByUsername(String username, int bookId) {
-    String insertRentSQL = "INSERT INTO RENTS (username, book_id, rental_date) VALUES (?, ?, CURRENT_DATE)";
+    String insertRentSQL = "INSERT INTO RENTALS (username, bookid, rent_date) VALUES (?, ?, CURRENT_DATE)";
     try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertRentSQL)) {
         pstmt.setString(1, username);
         pstmt.setInt(2, bookId);

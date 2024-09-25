@@ -35,9 +35,10 @@ public class AdminDashBoard extends JFrame {
         booksPanel.setBorder(BorderFactory.createTitledBorder("Books"));
 
         // Table for Books
-        String[] bookColumnNames = {"Book ID", "Title", "Author", "Genre"};
+        String[] bookColumnNames = {"Book ID", "Title", "Author", "Genre", "ISBN", "published_year", "Available"};
         Object[][] bookData = {};  // Will be populated from the database
         booksTable = new JTable(new DefaultTableModel(bookData, bookColumnNames));
+
         JScrollPane booksScrollPane = new JScrollPane(booksTable);
         booksPanel.add(booksScrollPane, BorderLayout.CENTER);
 
@@ -135,24 +136,62 @@ public class AdminDashBoard extends JFrame {
 
     private void showAddBookDialog() {
         JPanel panel = new JPanel(new GridLayout(0, 2));
+
+        // Title
         panel.add(new JLabel("Title:"));
         JTextField titleField = new JTextField();
         panel.add(titleField);
-        
+
+        // Author
         panel.add(new JLabel("Author:"));
         JTextField authorField = new JTextField();
         panel.add(authorField);
-        
+
+        // Genre
         panel.add(new JLabel("Genre:"));
         JTextField genreField = new JTextField();
         panel.add(genreField);
-        
+
+        // ISBN
+        panel.add(new JLabel("ISBN:"));
+        JTextField isbnField = new JTextField();
+        panel.add(isbnField);
+
+        // Year Published
+        panel.add(new JLabel("published_year"));
+        JTextField yearField = new JTextField();
+        panel.add(yearField);
+
+        // Availability
+        panel.add(new JLabel("Available:"));
+        JCheckBox availableCheckbox = new JCheckBox();
+        panel.add(availableCheckbox);
+
         int result = JOptionPane.showConfirmDialog(this, panel, "Add Book", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             String title = titleField.getText();
             String author = authorField.getText();
             String genre = genreField.getText();
-            bookDAO.addBook(title, author, genre);
+            String isbn = isbnField.getText();
+            String yearPublishedStr = yearField.getText();
+            boolean available = availableCheckbox.isSelected();
+
+            // Validation for empty fields and numeric year
+            if (title.isEmpty() || author.isEmpty() || genre.isEmpty() || isbn.isEmpty() || yearPublishedStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields must be filled out.");
+                return;
+            }
+
+            int yearPublished;
+            try {
+                yearPublished = Integer.parseInt(yearPublishedStr);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Year Published must be a number.");
+                return;
+            }
+
+            // Add book to the database
+            bookDAO.addBook(title, author, genre, isbn, yearPublished, available);
             populateBooksTable();  // Refresh the book table
         }
     }
@@ -176,15 +215,15 @@ public class AdminDashBoard extends JFrame {
         panel.add(new JLabel("Username:"));
         JTextField usernameField = new JTextField();
         panel.add(usernameField);
-        
+
         panel.add(new JLabel("Email:"));
         JTextField emailField = new JTextField();
         panel.add(emailField);
-        
+
         panel.add(new JLabel("Role:"));
         JTextField roleField = new JTextField();
         panel.add(roleField);
-        
+
         int result = JOptionPane.showConfirmDialog(this, panel, "Add User", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             String username = usernameField.getText();
