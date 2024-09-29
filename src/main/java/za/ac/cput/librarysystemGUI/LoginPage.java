@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import za.ac.cput.librarysystemGUI.AdminDashBoard;
-import za.ac.cput.librarysystemGui.AudioBook.UserSession;
+import ac.za.cput.librarysystem.domain.UserSession;
 
 public class LoginPage extends JFrame {
 

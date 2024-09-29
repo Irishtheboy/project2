@@ -2,9 +2,11 @@ package ac.za.cput.librarysystem.dao;
 
 import ac.za.cput.librarysystem.connection.DBConnection;  // Ensure this is your correct DB connection class
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -67,7 +69,7 @@ public class BookDAO {
             pstmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Book deleted successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace for debugging
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error deleting book: " + e.getMessage());
         }
     }
@@ -77,7 +79,7 @@ public class BookDAO {
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, bookId);
             int rowsUpdated = pstmt.executeUpdate();
-            return rowsUpdated > 0; // Return true if a row was updated
+            return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error updating book availability: " + e.getMessage());
@@ -85,7 +87,6 @@ public class BookDAO {
         }
     }
 
-    // Method to check if the book is available
     public boolean isBookAvailable(int bookId) {
         String query = "SELECT available FROM BOOKS WHERE bookid = ?";
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -97,42 +98,45 @@ public class BookDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Return false if the book is not found or there's an error
+        return false;
     }
 
-    // Method to mark a book as rented and create a rental record
-    public boolean rentBook(int userId, int bookId) {
-        String updateAvailabilityQuery = "UPDATE BOOKS SET available = false WHERE bookid = ?";
-        String createRentalQuery = "INSERT INTO RENTALS (userid, bookid, rent_date) VALUES (?, ?, CURRENT_DATE)";
+   public boolean rentBook(int userId, int bookId) {
+    String updateBookAvailability = "UPDATE books SET available = false WHERE bookid = ?";
+    String insertRentalRecord = "INSERT INTO rentals (userid, bookid, rent_date, return_date, status) VALUES (?, ?, CURRENT_DATE, ?, 'active')";
 
-        // Check if the user and book exist before proceeding
-        if (!isUserExists(userId) || !isBookExists(bookId)) {
-            JOptionPane.showMessageDialog(null, "User or Book does not exist.");
-            return false; // Early exit if validation fails
-        }
+    try (Connection connection = DBConnection.derbyConnection()) {
+        connection.setAutoCommit(false); // Start transaction
 
-        try (Connection conn = DBConnection.derbyConnection()) {
-            // First, mark the book as unavailable
-            try (PreparedStatement pstmt = conn.prepareStatement(updateAvailabilityQuery)) {
-                pstmt.setInt(1, bookId);
-                pstmt.executeUpdate();
+        // Update the book availability
+        try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
+            updateBookStmt.setInt(1, bookId);
+            int rowsUpdated = updateBookStmt.executeUpdate();
+
+            // If book availability update was successful, insert the rental record
+            if (rowsUpdated > 0) {
+                LocalDate rentDate = LocalDate.now();
+                LocalDate returnDate = rentDate.plusDays(14); // Calculate return date
+                Date sqlReturnDate = Date.valueOf(returnDate); // Convert LocalDate to java.sql.Date
+
+                try (PreparedStatement insertRentalStmt = connection.prepareStatement(insertRentalRecord)) {
+                    insertRentalStmt.setInt(1, userId);
+                    insertRentalStmt.setInt(2, bookId);
+                    insertRentalStmt.setDate(3, sqlReturnDate); // Set return date
+                    insertRentalStmt.executeUpdate();
+                }
+                connection.commit(); // Commit transaction
+                return true;
+            } else {
+                connection.rollback(); // Rollback transaction if book is not updated
             }
-
-            // Then, insert a rental record
-            try (PreparedStatement pstmt = conn.prepareStatement(createRentalQuery)) {
-                pstmt.setInt(1, userId);
-                pstmt.setInt(2, bookId);
-                int rowsInserted = pstmt.executeUpdate();
-                return rowsInserted > 0; // Return true if the rental was successfully logged
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error renting book: " + e.getMessage());
-            return false;
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return false;
+}
 
-// Method to check if user exists
     private boolean isUserExists(int userId) {
         String query = "SELECT COUNT(*) FROM USERS WHERE userid = ?";
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -147,7 +151,6 @@ public class BookDAO {
         return false;
     }
 
-// Method to check if book exists
     private boolean isBookExists(int bookId) {
         String query = "SELECT COUNT(*) FROM BOOKS WHERE bookid = ?";
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -161,5 +164,65 @@ public class BookDAO {
         }
         return false;
     }
+    
+    public List<Object[]> getRentedBooks(int userId) {
+    String query = "SELECT b.bookid, b.title, b.author, r.return_date " +
+                   "FROM rentals r JOIN books b ON r.bookid = b.bookid " +
+                   "WHERE r.userid = ? AND r.status = 'active'";
+    List<Object[]> rentedBooksList = new ArrayList<>();
+
+    try (Connection conn = DBConnection.derbyConnection(); 
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setInt(1, userId);
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            Object[] rentedBook = new Object[4];
+            rentedBook[0] = rs.getInt("bookid");
+            rentedBook[1] = rs.getString("title");
+            rentedBook[2] = rs.getString("author");
+            rentedBook[3] = rs.getDate("return_date");
+
+            rentedBooksList.add(rentedBook);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error fetching rented books: " + e.getMessage());
+    }
+
+    return rentedBooksList;
+}
+    public boolean returnBook(int userId, int bookId) {
+    String updateBookAvailability = "UPDATE books SET available = true WHERE bookid = ?";
+    String updateRentalStatus = "UPDATE rentals SET status = 'returned' WHERE userid = ? AND bookid = ?";
+
+    try (Connection connection = DBConnection.derbyConnection()) {
+        connection.setAutoCommit(false); // Start transaction
+
+        // Update the book availability
+        try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
+            updateBookStmt.setInt(1, bookId);
+            int rowsUpdated = updateBookStmt.executeUpdate();
+
+            // If book availability update was successful, update rental status
+            if (rowsUpdated > 0) {
+                try (PreparedStatement updateRentalStmt = connection.prepareStatement(updateRentalStatus)) {
+                    updateRentalStmt.setInt(1, userId);
+                    updateRentalStmt.setInt(2, bookId);
+                    updateRentalStmt.executeUpdate();
+                }
+                connection.commit(); // Commit transaction
+                return true;
+            } else {
+                connection.rollback(); // Rollback transaction if book is not updated
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
 
 }
+

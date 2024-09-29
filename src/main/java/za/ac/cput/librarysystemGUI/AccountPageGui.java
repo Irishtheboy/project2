@@ -1,4 +1,6 @@
 package za.ac.cput.librarysystemGui;
+import ac.za.cput.librarysystem.dao.UserDAO;
+import ac.za.cput.librarysystem.domain.User;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,9 +16,13 @@ public class AccountPageGui extends JFrame implements ActionListener {
     private JPanel pnlSouth, pnlNorth, pnlCenter;
     private JLabel lblAccount, lblOverdue, lblAvailable, lblFine, lblFineAmount, lblLoanedBooks, lblBooksNo;
     private BufferedImage backgroundImage;
+     private UserDAO userDAO; // Create UserDAO instance
+    private String username; // Store the username of the logged-in user
 
     public AccountPageGui() {
         super("Account");
+         this.username = username; // Set the username from the constructor
+        userDAO = new UserDAO(); // Initialize UserDAO
 
         try {
             backgroundImage = ImageIO.read(getClass().getResourceAsStream(""));
@@ -43,10 +49,13 @@ public class AccountPageGui extends JFrame implements ActionListener {
         topMenuBtn.addActionListener(this);
         checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
-
+        
+       
         setGui();
     }
+    
 
+    
     private void setGui() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
