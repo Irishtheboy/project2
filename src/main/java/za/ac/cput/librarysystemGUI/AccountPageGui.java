@@ -1,6 +1,6 @@
 package za.ac.cput.librarysystemGui;
 import ac.za.cput.librarysystem.dao.UserDAO;
-import ac.za.cput.librarysystem.domain.User;
+import ac.za.cput.librarysystem.dao.BookDAO;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,15 +12,17 @@ import javax.swing.*;
 
 public class AccountPageGui extends JFrame implements ActionListener {
 
-    private JButton topMenuBtn, checkOutBtn, logOutBtn;
+    private JButton topMenuBtn, checkOutBtn, logOutBtn, paymentsBtn;
     private JPanel pnlSouth, pnlNorth, pnlCenter;
     private JLabel lblAccount, lblOverdue, lblAvailable, lblFine, lblFineAmount, lblLoanedBooks, lblBooksNo;
     private BufferedImage backgroundImage;
-     private UserDAO userDAO; // Create UserDAO instance
-    private String username; // Store the username of the logged-in user
+     private UserDAO userDAO;
+    private BookDAO bookDAO;    private String username; // Store the username of the logged-in user
 
     public AccountPageGui() {
         super("Account");
+        userDAO = new UserDAO();  // Initialize UserDAO
+        bookDAO = new BookDAO();  // Initialize BookDAO
          this.username = username; // Set the username from the constructor
         userDAO = new UserDAO(); // Initialize UserDAO
 
@@ -33,6 +35,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         topMenuBtn = new JButton("Top Menu");
         checkOutBtn = new JButton("Check Out");
         logOutBtn = new JButton("Log Out");
+        paymentsBtn = new JButton("Pay");
 
         pnlSouth = new JPanel();
         pnlNorth = new JPanel();
@@ -49,6 +52,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         topMenuBtn.addActionListener(this);
         checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
+        paymentsBtn.addActionListener(this);
         
        
         setGui();
@@ -118,10 +122,11 @@ public class AccountPageGui extends JFrame implements ActionListener {
         gbc.gridx = 1;
         pnlCenter.add(lblBooksNo, gbc);
 
-        pnlSouth.setLayout(new GridLayout(1, 3));
+        pnlSouth.setLayout(new GridLayout(1, 4));
         pnlSouth.add(topMenuBtn);
         pnlSouth.add(checkOutBtn);
         pnlSouth.add(logOutBtn);
+        pnlSouth.add(paymentsBtn);
         pnlSouth.setOpaque(false);
 
         backgroundPanel.add(pnlNorth, BorderLayout.NORTH);
@@ -145,6 +150,8 @@ public class AccountPageGui extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, "Returning to top menu");
             new TopMenu(); 
             dispose();
+        } else if(e.getSource() == paymentsBtn){
+            JOptionPane.showConfirmDialog(this, "Are you sure you want to pay off your "+lblFineAmount.getText());
         }
     }
 
