@@ -11,24 +11,25 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-
 public class AccountPageGui extends JFrame implements ActionListener {
 
     private JButton topMenuBtn, checkOutBtn, logOutBtn, paymentsBtn;
     private JPanel pnlSouth, pnlNorth, pnlCenter;
-    private JLabel lblAccount, lblOverdue, lblAvailable, lblFine, lblFineAmount, lblLoanedBooks, lblBooksNo;
+    private JLabel lblAccount;
     private BufferedImage backgroundImage;
     private UserDAO userDAO;
     private BookDAO bookDAO;
     private String username; // Store the username of the logged-in user
     private int userId;
+    private JTable accountTable; // Table to display account information
+    private JScrollPane scrollPane;
+
     public AccountPageGui() {
         super("Account");
-         this.userId = userId;
+        this.userId = userId;
         userDAO = new UserDAO();  // Initialize UserDAO
         bookDAO = new BookDAO();  // Initialize BookDAO
         this.username = username; // Set the username from the constructor
-        userDAO = new UserDAO(); // Initialize UserDAO
 
         try {
             backgroundImage = ImageIO.read(getClass().getResourceAsStream(""));
@@ -46,19 +47,34 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlCenter = new JPanel();
 
         lblAccount = new JLabel("Account", SwingConstants.CENTER);
-        lblOverdue = new JLabel("Overdue Books:", SwingConstants.RIGHT);
-        lblAvailable = new JLabel("3", SwingConstants.LEFT);
-        lblFine = new JLabel("Fine Amount:", SwingConstants.RIGHT);
-        lblFineAmount = new JLabel("R50", SwingConstants.LEFT);
-        lblLoanedBooks = new JLabel("Loaned Books:", SwingConstants.RIGHT);
-        lblBooksNo = new JLabel("2", SwingConstants.LEFT);
 
         topMenuBtn.addActionListener(this);
         checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
         paymentsBtn.addActionListener(this);
 
+        // Set up the JTable with account information
+        setUpAccountTable();
+
         setGui();
+    }
+
+    private void setUpAccountTable() {
+        // Use methods from the DAO classes to fetch the actual data from the database
+        int overdueBooks = bookDAO.getOverdueBooksCount(userId);  // Fetch number of overdue books for this user
+        double fineAmount = userDAO.getFineAmount(userId);        // Fetch the total fine amount for this user
+        int loanedBooks = bookDAO.getLoanedBooksCount(userId);    // Fetch the number of loaned books for this user
+
+        // Populate the table with dynamic data from the database
+        String[] columnNames = {"Details", "Value"};
+        Object[][] data = {
+            {"Overdue Books:", overdueBooks},
+            {"Fine Amount:", "R" + fineAmount},
+            {"Loaned Books:", loanedBooks}
+        };
+
+        accountTable = new JTable(data, columnNames);
+        scrollPane = new JScrollPane(accountTable);
     }
 
     private void setGui() {
@@ -97,31 +113,8 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlNorth.add(lblAccount);
         pnlNorth.setOpaque(false);
 
-        pnlCenter.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        pnlCenter.add(lblOverdue, gbc);
-
-        gbc.gridx = 1;
-        pnlCenter.add(lblAvailable, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        pnlCenter.add(lblFine, gbc);
-
-        gbc.gridx = 1;
-        pnlCenter.add(lblFineAmount, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        pnlCenter.add(lblLoanedBooks, gbc);
-
-        gbc.gridx = 1;
-        pnlCenter.add(lblBooksNo, gbc);
+        pnlCenter.setLayout(new BorderLayout());
+        pnlCenter.add(scrollPane, BorderLayout.CENTER); // Add the JTable inside the JScrollPane to the center panel
 
         pnlSouth.setLayout(new GridLayout(1, 4));
         pnlSouth.add(topMenuBtn);
@@ -137,38 +130,36 @@ public class AccountPageGui extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    
-    
-    
 
-        @Override
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == logOutBtn) {
             JOptionPane.showMessageDialog(this, "Logged out");
             dispose();
         } else if (e.getSource() == checkOutBtn) {
             JOptionPane.showMessageDialog(this, "Checked out successfully");
-            new CheckoutPage(); 
+            new CheckoutPage();
             dispose();
         } else if (e.getSource() == topMenuBtn) {
             JOptionPane.showMessageDialog(this, "Returning to top menu");
-            new TopMenu(); 
+            new TopMenu();
             dispose();
         } else if (e.getSource() == paymentsBtn) {
             // Get the total fine amount for the user
             double fineAmount = userDAO.getFineAmount(userId); // Now userId is available
             if (fineAmount > 0) {
-                int confirm = JOptionPane.showConfirmDialog(this, 
-                    "You have a fine of R" + fineAmount + ". Do you want to pay it now?", 
-                    "Confirm Payment", 
-                    JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "You have a fine of R" + fineAmount + ". Do you want to pay it now?",
+                        "Confirm Payment",
+                        JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     // Proceed to pay the fine
                     boolean paymentSuccess = userDAO.payFine(userId); // Call the payFine method
                     if (paymentSuccess) {
                         JOptionPane.showMessageDialog(this, "Fine paid successfully.");
-                        lblFineAmount.setText("R0"); // Update the fine amount label to 0
+                        // Update the fine amount in the table
+                        accountTable.setValueAt("R0", 1, 1);
                     } else {
                         JOptionPane.showMessageDialog(this, "Failed to process payment. Please try again.");
                     }
@@ -178,7 +169,6 @@ public class AccountPageGui extends JFrame implements ActionListener {
             }
         }
     }
-
 
     class BackgroundPanel extends JPanel {
 

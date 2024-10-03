@@ -221,6 +221,46 @@ public class BookDAO {
     }
     return false;
 }
+public int getOverdueBooksCount(int userId) {
+    int overdueCount = 0;
+    String query = "SELECT COUNT(*) FROM RENTALS WHERE USERID = ? AND RETURN_DATE < CURRENT_DATE AND STATUS = 'active'";
+
+    try (Connection conn = DBConnection.derbyConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setInt(1, userId);
+        ResultSet rs = pstmt.executeQuery();
+        
+        if (rs.next()) {
+            overdueCount = rs.getInt(1); // Get the count of overdue books
+        }
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error fetching overdue books: " + e.getMessage());
+    }
+    
+    return overdueCount;
+}
+public int getLoanedBooksCount(int userId) {
+    int loanedCount = 0;
+    String query = "SELECT COUNT(*) FROM RENTALS WHERE USERID = ? AND STATUS = 'active'";
+
+    try (Connection conn = DBConnection.derbyConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        pstmt.setInt(1, userId);
+        ResultSet rs = pstmt.executeQuery();
+        
+        if (rs.next()) {
+            loanedCount = rs.getInt(1); // Get the count of loaned books
+        }
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error fetching loaned books: " + e.getMessage());
+    }
+    
+    return loanedCount;
+}
 
 
 
