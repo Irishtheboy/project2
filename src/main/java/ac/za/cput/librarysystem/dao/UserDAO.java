@@ -184,5 +184,43 @@ public class UserDAO {
         }
         return accountDetails;
     }
+    
+      public boolean payFine(int userId) {
+        String query = "UPDATE FINES SET IS_PAID = TRUE WHERE USERID = ? AND IS_PAID = FALSE";
+        
+        try (Connection conn = DBConnection.derbyConnection(); 
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            int rowsUpdated = pstmt.executeUpdate();
+            
+            if (rowsUpdated > 0) {
+                return true; // Fine paid successfully
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return false; // Failed to pay fine
+    }
+
+    // Method to get the fine amount for the user
+    public double getFineAmount(int userId) {
+        String query = "SELECT SUM(FINE_AMOUNT) AS totalFine FROM FINES WHERE USERID = ? AND IS_PAID = FALSE";
+        double fineAmount = 0;
+
+        try (Connection conn = DBConnection.derbyConnection(); 
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                fineAmount = rs.getDouble("totalFine");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return fineAmount;
+    }
 
 }
