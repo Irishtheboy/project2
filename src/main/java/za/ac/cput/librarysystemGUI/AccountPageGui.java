@@ -10,6 +10,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.*;
+import javax.swing.table.TableRowSorter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class AccountPageGui extends JFrame implements ActionListener {
 
@@ -24,6 +28,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
     private JTable accountTable;
     private JScrollPane scrollPane;
     private JButton feedbackBtn;
+    
 
     public AccountPageGui() {
         super("Account");
@@ -39,7 +44,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         }
 
         topMenuBtn = new JButton("Top Menu");
-        checkOutBtn = new JButton("Check Out");
+        checkOutBtn = new JButton("Feedback");
         logOutBtn = new JButton("Log Out");
         paymentsBtn = new JButton("Pay");
 
@@ -151,7 +156,7 @@ public void actionPerformed(ActionEvent e) {
         dispose();
     } else if (e.getSource() == checkOutBtn) {
         JOptionPane.showMessageDialog(this, "Checked out successfully");
-        new CheckoutPage();
+        new FeedbackPage();
         dispose();
     } else if (e.getSource() == topMenuBtn) {
         JOptionPane.showMessageDialog(this, "Returning to top menu");
