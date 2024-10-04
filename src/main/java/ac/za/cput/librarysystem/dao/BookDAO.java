@@ -43,6 +43,32 @@ public class BookDAO {
         return booksList;
     }
 
+    public List<Object[]> getBorrowHistory(int userId) {
+        List<Object[]> borrowHistory = new ArrayList<>();
+        String query = "SELECT b.BOOKID, b.TITLE, b.AUTHOR, r.RENT_DATE, r.RETURN_DATE "
+                + "FROM BOOKS b "
+                + "JOIN RENTALS r ON b.BOOKID = r.BOOKID "
+                + "WHERE r.USERID = ? AND r.STATUS = 'returned'"; // Modify 'STATUS' if needed
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] historyEntry = new Object[5];
+                historyEntry[0] = rs.getInt("BOOKID");
+                historyEntry[1] = rs.getString("TITLE");
+                historyEntry[2] = rs.getString("AUTHOR");
+                historyEntry[3] = rs.getDate("RENT_DATE"); // Borrow date
+                historyEntry[4] = rs.getDate("RETURN_DATE"); // Return date
+                borrowHistory.add(historyEntry);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return borrowHistory;
+    }
+
     // Method to add a book to the database
     public void addBook(String title, String author, String genre, String isbn, int yearPublished, boolean available) {
         String sql = "INSERT INTO BOOKS (title, author, genre, isbn, published_year, available) VALUES (?, ?, ?, ?, ?, ?)";
@@ -101,41 +127,41 @@ public class BookDAO {
         return false;
     }
 
-   public boolean rentBook(int userId, int bookId) {
-    String updateBookAvailability = "UPDATE books SET available = false WHERE bookid = ?";
-    String insertRentalRecord = "INSERT INTO rentals (userid, bookid, rent_date, return_date, status) VALUES (?, ?, CURRENT_DATE, ?, 'active')";
+    public boolean rentBook(int userId, int bookId) {
+        String updateBookAvailability = "UPDATE books SET available = false WHERE bookid = ?";
+        String insertRentalRecord = "INSERT INTO rentals (userid, bookid, rent_date, return_date, status) VALUES (?, ?, CURRENT_DATE, ?, 'active')";
 
-    try (Connection connection = DBConnection.derbyConnection()) {
-        connection.setAutoCommit(false); // Start transaction
+        try (Connection connection = DBConnection.derbyConnection()) {
+            connection.setAutoCommit(false); // Start transaction
 
-        // Update the book availability
-        try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
-            updateBookStmt.setInt(1, bookId);
-            int rowsUpdated = updateBookStmt.executeUpdate();
+            // Update the book availability
+            try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
+                updateBookStmt.setInt(1, bookId);
+                int rowsUpdated = updateBookStmt.executeUpdate();
 
-            // If book availability update was successful, insert the rental record
-            if (rowsUpdated > 0) {
-                LocalDate rentDate = LocalDate.now();
-                LocalDate returnDate = rentDate.plusDays(14); // Calculate return date
-                Date sqlReturnDate = Date.valueOf(returnDate); // Convert LocalDate to java.sql.Date
+                // If book availability update was successful, insert the rental record
+                if (rowsUpdated > 0) {
+                    LocalDate rentDate = LocalDate.now();
+                    LocalDate returnDate = rentDate.plusDays(14); // Calculate return date
+                    Date sqlReturnDate = Date.valueOf(returnDate); // Convert LocalDate to java.sql.Date
 
-                try (PreparedStatement insertRentalStmt = connection.prepareStatement(insertRentalRecord)) {
-                    insertRentalStmt.setInt(1, userId);
-                    insertRentalStmt.setInt(2, bookId);
-                    insertRentalStmt.setDate(3, sqlReturnDate); // Set return date
-                    insertRentalStmt.executeUpdate();
+                    try (PreparedStatement insertRentalStmt = connection.prepareStatement(insertRentalRecord)) {
+                        insertRentalStmt.setInt(1, userId);
+                        insertRentalStmt.setInt(2, bookId);
+                        insertRentalStmt.setDate(3, sqlReturnDate); // Set return date
+                        insertRentalStmt.executeUpdate();
+                    }
+                    connection.commit(); // Commit transaction
+                    return true;
+                } else {
+                    connection.rollback(); // Rollback transaction if book is not updated
                 }
-                connection.commit(); // Commit transaction
-                return true;
-            } else {
-                connection.rollback(); // Rollback transaction if book is not updated
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return false;
     }
-    return false;
-}
 
     private boolean isUserExists(int userId) {
         String query = "SELECT COUNT(*) FROM USERS WHERE userid = ?";
@@ -164,105 +190,102 @@ public class BookDAO {
         }
         return false;
     }
-    
+
     public List<Object[]> getRentedBooks(int userId) {
-    String query = "SELECT b.bookid, b.title, b.author, r.return_date " +
-                   "FROM rentals r JOIN books b ON r.bookid = b.bookid " +
-                   "WHERE r.userid = ? AND r.status = 'active'";
-    List<Object[]> rentedBooksList = new ArrayList<>();
+        String query = "SELECT b.bookid, b.title, b.author, r.return_date "
+                + "FROM rentals r JOIN books b ON r.bookid = b.bookid "
+                + "WHERE r.userid = ? AND r.status = 'active'";
+        List<Object[]> rentedBooksList = new ArrayList<>();
 
-    try (Connection conn = DBConnection.derbyConnection(); 
-         PreparedStatement pstmt = conn.prepareStatement(query)) {
-        pstmt.setInt(1, userId);
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            Object[] rentedBook = new Object[4];
-            rentedBook[0] = rs.getInt("bookid");
-            rentedBook[1] = rs.getString("title");
-            rentedBook[2] = rs.getString("author");
-            rentedBook[3] = rs.getDate("return_date");
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Object[] rentedBook = new Object[4];
+                rentedBook[0] = rs.getInt("bookid");
+                rentedBook[1] = rs.getString("title");
+                rentedBook[2] = rs.getString("author");
+                rentedBook[3] = rs.getDate("return_date");
 
-            rentedBooksList.add(rentedBook);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error fetching rented books: " + e.getMessage());
-    }
-
-    return rentedBooksList;
-}
-    public boolean returnBook(int userId, int bookId) {
-    String updateBookAvailability = "UPDATE books SET available = true WHERE bookid = ?";
-    String updateRentalStatus = "UPDATE rentals SET status = 'returned' WHERE userid = ? AND bookid = ?";
-
-    try (Connection connection = DBConnection.derbyConnection()) {
-        connection.setAutoCommit(false); // Start transaction
-
-        // Update the book availability
-        try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
-            updateBookStmt.setInt(1, bookId);
-            int rowsUpdated = updateBookStmt.executeUpdate();
-
-            // If book availability update was successful, update rental status
-            if (rowsUpdated > 0) {
-                try (PreparedStatement updateRentalStmt = connection.prepareStatement(updateRentalStatus)) {
-                    updateRentalStmt.setInt(1, userId);
-                    updateRentalStmt.setInt(2, bookId);
-                    updateRentalStmt.executeUpdate();
-                }
-                connection.commit(); // Commit transaction
-                return true;
-            } else {
-                connection.rollback(); // Rollback transaction if book is not updated
+                rentedBooksList.add(rentedBook);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error fetching rented books: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return false;
-}
-public int getOverdueBooksCount(int userId) {
-    int overdueCount = 0;
-    String query = "SELECT COUNT(*) FROM RENTALS WHERE USERID = ? AND RETURN_DATE < CURRENT_DATE AND STATUS = 'active'";
 
-    try (Connection conn = DBConnection.derbyConnection();
-         PreparedStatement pstmt = conn.prepareStatement(query)) {
-        pstmt.setInt(1, userId);
-        ResultSet rs = pstmt.executeQuery();
-        
-        if (rs.next()) {
-            overdueCount = rs.getInt(1); // Get the count of overdue books
+        return rentedBooksList;
+    }
+
+    public boolean returnBook(int userId, int bookId) {
+        String updateBookAvailability = "UPDATE books SET available = true WHERE bookid = ?";
+        String updateRentalStatus = "UPDATE rentals SET status = 'returned' WHERE userid = ? AND bookid = ?";
+
+        try (Connection connection = DBConnection.derbyConnection()) {
+            connection.setAutoCommit(false); // Start transaction
+
+            // Update the book availability
+            try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
+                updateBookStmt.setInt(1, bookId);
+                int rowsUpdated = updateBookStmt.executeUpdate();
+
+                // If book availability update was successful, update rental status
+                if (rowsUpdated > 0) {
+                    try (PreparedStatement updateRentalStmt = connection.prepareStatement(updateRentalStatus)) {
+                        updateRentalStmt.setInt(1, userId);
+                        updateRentalStmt.setInt(2, bookId);
+                        updateRentalStmt.executeUpdate();
+                    }
+                    connection.commit(); // Commit transaction
+                    return true;
+                } else {
+                    connection.rollback(); // Rollback transaction if book is not updated
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error fetching overdue books: " + e.getMessage());
+        return false;
     }
-    
-    return overdueCount;
-}
-public int getLoanedBooksCount(int userId) {
-    int loanedCount = 0;
-    String query = "SELECT COUNT(*) FROM RENTALS WHERE USERID = ? AND STATUS = 'active'";
 
-    try (Connection conn = DBConnection.derbyConnection();
-         PreparedStatement pstmt = conn.prepareStatement(query)) {
-        pstmt.setInt(1, userId);
-        ResultSet rs = pstmt.executeQuery();
-        
-        if (rs.next()) {
-            loanedCount = rs.getInt(1); // Get the count of loaned books
+    public int getOverdueBooksCount(int userId) {
+        int overdueCount = 0;
+        String query = "SELECT COUNT(*) FROM RENTALS WHERE USERID = ? AND RETURN_DATE < CURRENT_DATE AND STATUS = 'active'";
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                overdueCount = rs.getInt(1); // Get the count of overdue books
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error fetching overdue books: " + e.getMessage());
         }
-        
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error fetching loaned books: " + e.getMessage());
+
+        return overdueCount;
     }
-    
-    return loanedCount;
+
+    public int getLoanedBooksCount(int userId) {
+        int loanedCount = 0;
+        String query = "SELECT COUNT(*) FROM RENTALS WHERE USERID = ? AND STATUS = 'active'";
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                loanedCount = rs.getInt(1); // Get the count of loaned books
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error fetching loaned books: " + e.getMessage());
+        }
+
+        return loanedCount;
+    }
+
 }
-
-
-
-}
-

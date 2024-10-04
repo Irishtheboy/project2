@@ -39,6 +39,16 @@ public class TopMenu extends JFrame implements ActionListener {
             }
         });
         fileMenu.add(exitItem);
+        
+        // Add Feedback option to the file menu
+        JMenuItem feedbackItem = new JMenuItem("Feedback");
+        feedbackItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FeedbackPage(); // Open the feedback page
+            }
+        });
+        fileMenu.add(feedbackItem); // Add the feedback item to the file menu
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
@@ -77,4 +87,3 @@ public class TopMenu extends JFrame implements ActionListener {
         }
     }
 }
-

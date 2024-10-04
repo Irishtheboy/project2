@@ -19,10 +19,11 @@ public class AccountPageGui extends JFrame implements ActionListener {
     private BufferedImage backgroundImage;
     private UserDAO userDAO;
     private BookDAO bookDAO;
-    private String username; // Store the username of the logged-in user
+    private String username;
     private int userId;
-    private JTable accountTable; // Table to display account information
+    private JTable accountTable;
     private JScrollPane scrollPane;
+    private JButton feedbackBtn;
 
     public AccountPageGui() {
         super("Account");
@@ -47,7 +48,8 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlCenter = new JPanel();
 
         lblAccount = new JLabel("Account", SwingConstants.CENTER);
-
+        feedbackBtn = new JButton("Feedback");
+        feedbackBtn.addActionListener(this);
         topMenuBtn.addActionListener(this);
         checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
@@ -60,10 +62,10 @@ public class AccountPageGui extends JFrame implements ActionListener {
     }
 
     private void setUpAccountTable() {
-        // Use methods from the DAO classes to fetch the actual data from the database
-        int overdueBooks = bookDAO.getOverdueBooksCount(userId);  // Fetch number of overdue books for this user
-        double fineAmount = userDAO.getFineAmount(userId);        // Fetch the total fine amount for this user
-        int loanedBooks = bookDAO.getLoanedBooksCount(userId);    // Fetch the number of loaned books for this user
+
+        int overdueBooks = bookDAO.getOverdueBooksCount(userId);
+        double fineAmount = userDAO.getFineAmount(userId);
+        int loanedBooks = bookDAO.getLoanedBooksCount(userId);
 
         // Populate the table with dynamic data from the database
         String[] columnNames = {"Details", "Value"};
@@ -86,6 +88,8 @@ public class AccountPageGui extends JFrame implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
+
+        // Create menu items for File menu
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(new ActionListener() {
             @Override
@@ -93,15 +97,22 @@ public class AccountPageGui extends JFrame implements ActionListener {
                 System.exit(0); // Exit the application
             }
         });
+
+        // Create Feedback menu item
+        JMenuItem feedbackItem = new JMenuItem("Feedback");
+        feedbackItem.addActionListener(this); // Add ActionListener for feedback
+
+        // Add items to the File menu
+        fileMenu.add(feedbackItem);
         fileMenu.add(exitItem);
 
+        // Create Help menu
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
         helpMenu.add(aboutItem);
 
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-
         setJMenuBar(menuBar);
 
         // Set up the background panel
@@ -116,12 +127,14 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlCenter.setLayout(new BorderLayout());
         pnlCenter.add(scrollPane, BorderLayout.CENTER); // Add the JTable inside the JScrollPane to the center panel
 
-        pnlSouth.setLayout(new GridLayout(1, 4));
+        // Initialize pnlSouth layout and add buttons
+        pnlSouth.setLayout(new GridLayout(1, 4)); // Adjust column count if needed
         pnlSouth.add(topMenuBtn);
         pnlSouth.add(checkOutBtn);
         pnlSouth.add(logOutBtn);
         pnlSouth.add(paymentsBtn);
-        pnlSouth.setOpaque(false);
+
+        pnlSouth.setOpaque(false); // Set opaque after adding components
 
         backgroundPanel.add(pnlNorth, BorderLayout.NORTH);
         backgroundPanel.add(pnlCenter, BorderLayout.CENTER);
@@ -132,43 +145,43 @@ public class AccountPageGui extends JFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == logOutBtn) {
-            JOptionPane.showMessageDialog(this, "Logged out");
-            dispose();
-        } else if (e.getSource() == checkOutBtn) {
-            JOptionPane.showMessageDialog(this, "Checked out successfully");
-            new CheckoutPage();
-            dispose();
-        } else if (e.getSource() == topMenuBtn) {
-            JOptionPane.showMessageDialog(this, "Returning to top menu");
-            new TopMenu();
-            dispose();
-        } else if (e.getSource() == paymentsBtn) {
-            // Get the total fine amount for the user
-            double fineAmount = userDAO.getFineAmount(userId); // Now userId is available
-            if (fineAmount > 0) {
-                int confirm = JOptionPane.showConfirmDialog(this,
-                        "You have a fine of R" + fineAmount + ". Do you want to pay it now?",
-                        "Confirm Payment",
-                        JOptionPane.YES_NO_OPTION);
+public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == logOutBtn) {
+        JOptionPane.showMessageDialog(this, "Logged out");
+        dispose();
+    } else if (e.getSource() == checkOutBtn) {
+        JOptionPane.showMessageDialog(this, "Checked out successfully");
+        new CheckoutPage();
+        dispose();
+    } else if (e.getSource() == topMenuBtn) {
+        JOptionPane.showMessageDialog(this, "Returning to top menu");
+        new TopMenu();
+        dispose();
+    } else if (e.getSource() == paymentsBtn) {
+        double fineAmount = userDAO.getFineAmount(userId);
+        if (fineAmount > 0) {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "You have a fine of R" + fineAmount + ". Do you want to pay it now?",
+                    "Confirm Payment",
+                    JOptionPane.YES_NO_OPTION);
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    // Proceed to pay the fine
-                    boolean paymentSuccess = userDAO.payFine(userId); // Call the payFine method
-                    if (paymentSuccess) {
-                        JOptionPane.showMessageDialog(this, "Fine paid successfully.");
-                        // Update the fine amount in the table
-                        accountTable.setValueAt("R0", 1, 1);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Failed to process payment. Please try again.");
-                    }
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean paymentSuccess = userDAO.payFine(userId);
+                if (paymentSuccess) {
+                    JOptionPane.showMessageDialog(this, "Fine paid successfully.");
+                    accountTable.setValueAt("R0", 1, 1);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to process payment. Please try again.");
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "You have no outstanding fines.");
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "You have no outstanding fines.");
         }
+    } else if (e.getActionCommand().equals("Feedback")) {
+        
     }
+}
+
 
     class BackgroundPanel extends JPanel {
 

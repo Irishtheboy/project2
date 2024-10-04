@@ -13,7 +13,6 @@ import za.ac.cput.librarysystemGui.CheckoutPage;
 import za.ac.cput.librarysystemGui.TopMenu;
 import za.ac.cput.librarysystemGui.AccountPageGui;
 
-
 public class AudioBook extends JFrame implements ActionListener {
 
     private JButton accountbtn, checkoutbtn, topMenubtn;
@@ -24,8 +23,11 @@ public class AudioBook extends JFrame implements ActionListener {
     private JTable bookTable;
     private DefaultTableModel rentedBooksModel;
     private JTable rentedBooksTable; // New JTable for rented books
-    private JButton rentButton; 
-    private JButton returnButton; // Declare returnButton
+    private JButton rentButton;
+    private JButton returnButton, searchButton; // Declare returnButton
+    private JTextField searchField;
+    private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
+    private JTable borrowHistoryTable; // JTable for borrow history
 
     public AudioBook() {
         bookDAO = new BookDAO();
@@ -68,6 +70,8 @@ public class AudioBook extends JFrame implements ActionListener {
         bottomPanel.add(accountbtn);
         bottomPanel.add(checkoutbtn);
         bottomPanel.add(topMenubtn);
+        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
+        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
 
         accountbtn.addActionListener(this);
         checkoutbtn.addActionListener(this);
@@ -86,6 +90,26 @@ public class AudioBook extends JFrame implements ActionListener {
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
+    }
+
+    private JPanel createBorrowHistoryPanel() {
+        JPanel historyPanel = new JPanel(new BorderLayout());
+
+        // Column Names for Borrow History Table
+        String[] historyColumnNames = {"Book ID", "Title", "Author", "Borrow Date", "Return Date"};
+        borrowHistoryModel = new DefaultTableModel(historyColumnNames, 0);
+
+        // Fetch borrow history data from the database and populate the table
+        List<Object[]> borrowHistory = bookDAO.getBorrowHistory(UserSession.getLoggedInUserId());
+        for (Object[] historyEntry : borrowHistory) {
+            borrowHistoryModel.addRow(historyEntry);
+        }
+
+        borrowHistoryTable = new JTable(borrowHistoryModel);
+        JScrollPane scrollPane = new JScrollPane(borrowHistoryTable);
+        historyPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return historyPanel;
     }
 
     // Create Table Panel for Books
@@ -110,8 +134,38 @@ public class AudioBook extends JFrame implements ActionListener {
         rentButton = new JButton("Rent Selected Book");
         rentButton.addActionListener(e -> rentSelectedBook());
         tablePanel.add(rentButton, BorderLayout.SOUTH);
+        // Search Panel
+        JPanel searchPanel = new JPanel(new FlowLayout());
+        searchField = new JTextField(20); // Text field for search input
+        searchButton = new JButton("Search"); // Button to initiate search
+        searchPanel.add(new JLabel("Search Book:")); // Label for search
+        searchPanel.add(searchField); // Add text field to panel
+        searchPanel.add(searchButton); // Add search button to panel
+
+        searchButton.addActionListener(e -> searchBooks()); // Add action listener to search button
+
+        tablePanel.add(searchPanel, BorderLayout.NORTH); // Add search panel to the top of the table panel
 
         return tablePanel;
+    }
+    // Search for books based on the title or author
+
+    private void searchBooks() {
+        String query = searchField.getText().trim().toLowerCase(); // Get search input and convert to lowercase
+        if (query.isEmpty()) {
+            refreshAvailableBooksTable(); // Show all books if search field is empty
+            return;
+        }
+
+        model.setRowCount(0); // Clear existing rows
+        List<Object[]> books = bookDAO.getAllBooks(); // Fetch all books from database
+        for (Object[] book : books) {
+            String title = book[1].toString().toLowerCase(); // Book title
+            String author = book[2].toString().toLowerCase(); // Book author
+            if (title.contains(query) || author.contains(query)) {
+                model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"}); // Add filtered results to table
+            }
+        }
     }
 
     // Create Table Panel for Rented Books
