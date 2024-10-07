@@ -30,7 +30,7 @@ public class SignupPageGui extends JFrame {
     public SignupPageGui() {
         setTitle("Library Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 450);  // Increase the size slightly to fit the role dropdown
+        setSize(500, 450);  
         setResizable(true);
         
         guiSetUp();
@@ -43,8 +43,8 @@ public class SignupPageGui extends JFrame {
     
     private void guiSetUp() {    
         mainPnl = new JPanel(new BorderLayout());
-        westPnl = new JPanel(new GridLayout(5, 1, 10, 10));  // Changed GridLayout to 5 rows for the role
-        eastPnl = new JPanel(new GridLayout(5, 1, 10, 10));  // Changed GridLayout to 5 rows for the role
+        westPnl = new JPanel(new GridLayout(5, 1, 10, 10));  
+        eastPnl = new JPanel(new GridLayout(5, 1, 10, 10));  
         centerPnl = new JPanel(new GridLayout(1, 2, 10, 10));
         southPnl = new JPanel(new GridLayout(2, 1, 10, 10));
         
@@ -55,14 +55,14 @@ public class SignupPageGui extends JFrame {
         emailLbl = new JLabel("Email:", SwingConstants.CENTER);
         phoneLbl = new JLabel("Phone:", SwingConstants.CENTER);
         passwordLbl = new JLabel("Password", SwingConstants.CENTER);
-        roleLbl = new JLabel("Role:", SwingConstants.CENTER);  // Add label for role selection
+        roleLbl = new JLabel("Role:", SwingConstants.CENTER);  
         
         usernameField = new JTextField(15);
         emailField = new JTextField(15);
         phoneField = new JTextField(15);
         passwordField = new JPasswordField(15);
         
-        // Create the combo box for roles
+        
         String[] roles = {"Member", "Admin"};
         roleComboBox = new JComboBox<>(roles);
         
@@ -82,13 +82,13 @@ public class SignupPageGui extends JFrame {
         westPnl.add(emailLbl);
         westPnl.add(phoneLbl);
         westPnl.add(passwordLbl);
-        westPnl.add(roleLbl);  // Add role label to the layout
+        westPnl.add(roleLbl);  
         
         eastPnl.add(usernameField);
         eastPnl.add(emailField);
         eastPnl.add(phoneField);
         eastPnl.add(passwordField);
-        eastPnl.add(roleComboBox);  // Add combo box to the layout
+        eastPnl.add(roleComboBox);  
         
         centerPnl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         centerPnl.add(westPnl);
@@ -99,7 +99,7 @@ public class SignupPageGui extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(signUpButton);
         southPnl.add(buttonPanel);
-        southPnl.add(loginLinkLbl); // Ensure this is added after initialization
+        southPnl.add(loginLinkLbl); 
         mainPnl.add(southPnl, BorderLayout.SOUTH);
     }
     

@@ -48,7 +48,7 @@ public class BookDAO {
         String query = "SELECT b.BOOKID, b.TITLE, b.AUTHOR, r.RENT_DATE, r.RETURN_DATE "
                 + "FROM BOOKS b "
                 + "JOIN RENTALS r ON b.BOOKID = r.BOOKID "
-                + "WHERE r.USERID = ? AND r.STATUS = 'returned'"; // Modify 'STATUS' if needed
+                + "WHERE r.USERID = ? AND r.STATUS = 'returned'"; 
 
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, userId);

@@ -2,7 +2,7 @@ package ac.za.cput.librarysystem.domain;
 
 public class UserSession {
     private static String loggedInUsername;
-    private static int loggedInUserId; // Store the user ID
+    private static int loggedInUserId;
 
     public static String getLoggedInUsername() {
         return loggedInUsername;
