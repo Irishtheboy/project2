@@ -120,5 +120,7 @@ public class CheckoutPage extends JFrame implements ActionListener {
             dispose();
         }
     }
+    
+    
 
 }

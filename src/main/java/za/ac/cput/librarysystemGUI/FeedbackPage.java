@@ -2,6 +2,9 @@ package za.ac.cput.librarysystemGui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class FeedbackPage extends JFrame {
 
@@ -19,6 +22,7 @@ public class FeedbackPage extends JFrame {
         submitBtn.addActionListener(e -> {
             String feedback = feedbackArea.getText();
             if (!feedback.isEmpty()) {
+                saveFeedback(feedback);
                 JOptionPane.showMessageDialog(this, "Feedback submitted. Thank you!");
                 feedbackArea.setText(""); 
             } else {
@@ -35,4 +39,14 @@ public class FeedbackPage extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
+    
+    private void saveFeedback(String feedback){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter("Feedback.txt", true))){
+            writer.write(feedback);
+            writer.newLine();
+        } catch (IOException e){
+            JOptionPane.showMessageDialog(this, "Error saving your feedback, kindly try again :)");
+        }
+    }
+    
 }

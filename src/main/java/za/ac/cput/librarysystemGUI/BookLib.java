@@ -18,8 +18,18 @@ public class BookLib extends JFrame implements ActionListener {
     private JButton accountbtn, checkoutbtn, topMenubtn;
     private List<Book> books;
 
-    public BookLib() {
-        books = loadBooksFromFile("books.txt");
+    public BookLib() {  
+
+        books = new ArrayList<>();
+         books.add(new Book("The Hunger Games", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_eight.jpg"));
+         books.add(new Book("Mockingjay", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_six.jpg"));
+         books.add(new Book("Catching Fire", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_five.jpg"));
+         books.add(new Book("The Ballad of Songbirds & Snakes", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_three.jpg"));
+         books.add(new Book("Divergent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_seven.jpg"));
+         books.add(new Book("Insurgent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_four.jpg"));
+         books.add(new Book("Allegiant", "Veronice Roth", "C:/Users/naqee/Documents/GitHub/project2//first_book.jpg"));
+         books.add(new Book("Four", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_two.jpg"));
+       
 
         setTitle("Book Library");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,6 +91,8 @@ public class BookLib extends JFrame implements ActionListener {
         for (Book book : books) {
             JPanel bookPanelItem = new JPanel(new BorderLayout());
             JLabel bookPic = new JLabel(book.getImageIcon());
+            
+//            bookPic.setPreferredSize(new Dimension(220, 326));
 
             bookPanelItem.add(bookPic, BorderLayout.CENTER);
 
@@ -88,8 +100,21 @@ public class BookLib extends JFrame implements ActionListener {
 
             JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
-            JButton trolleyBtn = new JButton(new ImageIcon("add.png"));
+            
+            JButton trolleyBtn = new JButton("Add to cart", new ImageIcon("trolley.png"));
+               
 
+            trolleyBtn.setActionCommand(book.getName());
+            
+            trolleyBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String bookNameClicked = e.getActionCommand();
+                JOptionPane.showMessageDialog(BookLib.this, "Added " + bookNameClicked + " to the cart.");
+                
+            }
+        });
+            
             JPanel namePanel = new JPanel(new BorderLayout());
             namePanel.add(bookName, BorderLayout.CENTER);
 
@@ -110,21 +135,6 @@ public class BookLib extends JFrame implements ActionListener {
         return bookPanel;
     }
 
-    private List<Book> loadBooksFromFile(String filename) {
-        List<Book> bookList = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] details = line.split(";");
-                if (details.length == 3) {
-                    bookList.add(new Book(details[0], details[1], details[2]));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bookList;
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -163,12 +173,12 @@ public class BookLib extends JFrame implements ActionListener {
         }
 
         public ImageIcon getImageIcon() {
-            URL resourceURL = getClass().getClassLoader().getResource("res/" + imagePath);
-            if (resourceURL == null) {
-                System.err.println("Image not found: res/" + imagePath);
-                return null; // Or return a default image or placeholder
-            }
-            return new ImageIcon(resourceURL);
-        }
+//            ImageIcon icon = new ImageIcon(imagePath);
+//            Image image = icon.getImage();
+//            Image newImage = image.getScaledInstance(220, 326, Image.SCALE_SMOOTH);
+            return new ImageIcon(imagePath);
+     }
+        
+
     }
 }
