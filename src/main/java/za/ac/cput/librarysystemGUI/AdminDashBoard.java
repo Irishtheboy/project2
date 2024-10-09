@@ -64,9 +64,9 @@ public class AdminDashBoard extends JFrame {
 
         // Buttons for Users
         JPanel usersButtonPanel = new JPanel(new FlowLayout());
-        btnAddUser = new JButton("Add User");
+//        btnAddUser = new JButton("Add User");
         btnDeleteUser = new JButton("Delete User");
-        usersButtonPanel.add(btnAddUser);
+//        usersButtonPanel.add(btnAddUser);
         usersButtonPanel.add(btnDeleteUser);
         usersPanel.add(usersButtonPanel, BorderLayout.SOUTH);
 
@@ -88,7 +88,7 @@ public class AdminDashBoard extends JFrame {
         // Add action listeners
         btnAddBook.addActionListener(e -> showAddBookDialog());
         btnDeleteBook.addActionListener(e -> deleteSelectedBook());
-        btnAddUser.addActionListener(e -> showAddUserDialog());
+//        btnAddUser.addActionListener(e -> showAddUserDialog());
         btnDeleteUser.addActionListener(e -> deleteSelectedUser());
     }
 
@@ -210,29 +210,29 @@ public class AdminDashBoard extends JFrame {
         }
     }
 
-    private void showAddUserDialog() {
-        JPanel panel = new JPanel(new GridLayout(0, 2));
-        panel.add(new JLabel("Username:"));
-        JTextField usernameField = new JTextField();
-        panel.add(usernameField);
-
-        panel.add(new JLabel("Email:"));
-        JTextField emailField = new JTextField();
-        panel.add(emailField);
-
-        panel.add(new JLabel("Role:"));
-        JTextField roleField = new JTextField();
-        panel.add(roleField);
-
-        int result = JOptionPane.showConfirmDialog(this, panel, "Add User", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            String username = usernameField.getText();
-            String email = emailField.getText();
-            String role = roleField.getText();
-            userDAO.addUser(username, email, role); // Add the user to the database
-            populateUsersTable();  // Refresh the user table
-        }
-    }
+//    private void showAddUserDialog() {
+//        JPanel panel = new JPanel(new GridLayout(0, 2));
+//        panel.add(new JLabel("Username:"));
+//        JTextField usernameField = new JTextField();
+//        panel.add(usernameField);
+//
+//        panel.add(new JLabel("Email:"));
+//        JTextField emailField = new JTextField();
+//        panel.add(emailField);
+//
+//        panel.add(new JLabel("Role:"));
+//        JTextField roleField = new JTextField();
+//        panel.add(roleField);
+//
+//        int result = JOptionPane.showConfirmDialog(this, panel, "Add User", JOptionPane.OK_CANCEL_OPTION);
+//        if (result == JOptionPane.OK_OPTION) {
+//            String username = usernameField.getText();
+//            String email = emailField.getText();
+//            String role = roleField.getText();
+//            userDAO.addUser(username, email, role); // Add the user to the database
+//            populateUsersTable();  // Refresh the user table
+//        }
+//    }
 
     private void deleteSelectedUser() {
         int selectedRow = usersTable.getSelectedRow();
