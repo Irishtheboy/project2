@@ -7,6 +7,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 public class AdminDashBoard extends JFrame {
@@ -16,6 +19,7 @@ public class AdminDashBoard extends JFrame {
     private JButton btnAddBook, btnDeleteBook, btnAddUser, btnDeleteUser;
     private UserDAO userDAO;
     private BookDAO bookDAO;
+    private JTextArea feedbackTextArea;
 
     public AdminDashBoard() {
         userDAO = new UserDAO();  // Initialize UserDAO
@@ -70,9 +74,19 @@ public class AdminDashBoard extends JFrame {
         usersButtonPanel.add(btnDeleteUser);
         usersPanel.add(usersButtonPanel, BorderLayout.SOUTH);
 
+        // Panel for Feedback
+        JPanel feedbackPanel = new JPanel(new BorderLayout());
+        feedbackPanel.setBorder(BorderFactory.createTitledBorder("Feedback"));
+
+        feedbackTextArea = new JTextArea();
+        feedbackTextArea.setEditable(false);
+        JScrollPane feedbackScrollPane = new JScrollPane(feedbackTextArea);
+        feedbackPanel.add(feedbackScrollPane, BorderLayout.CENTER);
+
         // Add panels to the tabbed pane
         tabbedPane.addTab("Books", booksPanel);
         tabbedPane.addTab("Users", usersPanel);
+        tabbedPane.addTab("Feedback", feedbackPanel);  // New Feedback tab
 
         // Add the tabbed pane to the main frame
         add(tabbedPane, BorderLayout.CENTER);
@@ -80,6 +94,7 @@ public class AdminDashBoard extends JFrame {
         // Fetch data and populate tables
         populateBooksTable();
         populateUsersTable();
+        populateFeedback();  // Populate the feedback tab
 
         // Set table sizes
         setTableColumnWidths(booksTable);
@@ -132,6 +147,22 @@ public class AdminDashBoard extends JFrame {
         for (Object[] user : users) {
             model.addRow(user);  // Add each user to the table
         }
+    }
+
+    private void populateFeedback() {
+        String filePath = "feedback.txt";  // The path to your feedback file
+        StringBuilder feedbackContent = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                feedbackContent.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error reading feedback file: " + e.getMessage());
+        }
+
+        feedbackTextArea.setText(feedbackContent.toString());
     }
 
     private void showAddBookDialog() {
@@ -192,56 +223,32 @@ public class AdminDashBoard extends JFrame {
 
             // Add book to the database
             bookDAO.addBook(title, author, genre, isbn, yearPublished, available);
-            populateBooksTable();  // Refresh the book table
+            populateBooksTable();  
         }
     }
 
     private void deleteSelectedBook() {
         int selectedRow = booksTable.getSelectedRow();
         if (selectedRow >= 0) {
-            int bookId = (int) booksTable.getValueAt(selectedRow, 0); // Assuming book ID is in the first column
+            int bookId = (int) booksTable.getValueAt(selectedRow, 0); 
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this book?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                bookDAO.deleteBook(bookId); // Call the method to delete the book
-                populateBooksTable(); // Refresh the book table
+                bookDAO.deleteBook(bookId); 
+                populateBooksTable(); 
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please select a book to delete.");
         }
     }
 
-//    private void showAddUserDialog() {
-//        JPanel panel = new JPanel(new GridLayout(0, 2));
-//        panel.add(new JLabel("Username:"));
-//        JTextField usernameField = new JTextField();
-//        panel.add(usernameField);
-//
-//        panel.add(new JLabel("Email:"));
-//        JTextField emailField = new JTextField();
-//        panel.add(emailField);
-//
-//        panel.add(new JLabel("Role:"));
-//        JTextField roleField = new JTextField();
-//        panel.add(roleField);
-//
-//        int result = JOptionPane.showConfirmDialog(this, panel, "Add User", JOptionPane.OK_CANCEL_OPTION);
-//        if (result == JOptionPane.OK_OPTION) {
-//            String username = usernameField.getText();
-//            String email = emailField.getText();
-//            String role = roleField.getText();
-//            userDAO.addUser(username, email, role); // Add the user to the database
-//            populateUsersTable();  // Refresh the user table
-//        }
-//    }
-
     private void deleteSelectedUser() {
         int selectedRow = usersTable.getSelectedRow();
         if (selectedRow >= 0) {
-            int userId = (int) usersTable.getValueAt(selectedRow, 0); // Assuming user ID is in the first column
+            int userId = (int) usersTable.getValueAt(selectedRow, 0); 
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this user?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                userDAO.deleteUser(userId); // Call the method to delete the user
-                populateUsersTable(); // Refresh the user table
+                userDAO.deleteUser(userId); 
+                populateUsersTable(); 
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please select a user to delete.");
