@@ -4,33 +4,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 public class BookLib extends JFrame implements ActionListener {
 
     private JButton accountbtn, checkoutbtn, topMenubtn;
     private List<Book> books;
+    private String adminPassword = "admin123"; // Admin password for approval
 
     public BookLib() {  
 
         books = new ArrayList<>();
-         books.add(new Book("The Hunger Games", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_eight.jpg"));
-         books.add(new Book("Mockingjay", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_six.jpg"));
-         books.add(new Book("Catching Fire", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_five.jpg"));
-         books.add(new Book("The Ballad of Songbirds & Snakes", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_three.jpg"));
-         books.add(new Book("Divergent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_seven.jpg"));
-         books.add(new Book("Insurgent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_four.jpg"));
-         books.add(new Book("Allegiant", "Veronice Roth", "C:/Users/naqee/Documents/GitHub/project2//first_book.jpg"));
-         books.add(new Book("Four", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_two.jpg"));
+        books.add(new Book("The Hunger Games", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_eight.jpg"));
+        books.add(new Book("Mockingjay", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_six.jpg"));
+        books.add(new Book("Catching Fire", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_five.jpg"));
+        books.add(new Book("The Ballad of Songbirds & Snakes", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_three.jpg"));
+        books.add(new Book("Divergent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_seven.jpg"));
+        books.add(new Book("Insurgent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_four.jpg"));
+        books.add(new Book("Allegiant", "Veronice Roth", "C:/Users/naqee/Documents/GitHub/project2//first_book.jpg"));
+        books.add(new Book("Four", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_two.jpg"));
        
-
         setTitle("Book Library");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(880, 600);
@@ -67,12 +61,7 @@ public class BookLib extends JFrame implements ActionListener {
 
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0); 
-            }
-        });
+        exitItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitItem);
 
         JMenu helpMenu = new JMenu("Help");
@@ -91,9 +80,6 @@ public class BookLib extends JFrame implements ActionListener {
         for (Book book : books) {
             JPanel bookPanelItem = new JPanel(new BorderLayout());
             JLabel bookPic = new JLabel(book.getImageIcon());
-            
-//            bookPic.setPreferredSize(new Dimension(220, 326));
-
             bookPanelItem.add(bookPic, BorderLayout.CENTER);
 
             JPanel textAndButtonPanel = new JPanel(new BorderLayout());
@@ -102,18 +88,12 @@ public class BookLib extends JFrame implements ActionListener {
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
             
             JButton trolleyBtn = new JButton("Add to cart", new ImageIcon("trolley.png"));
-               
-
             trolleyBtn.setActionCommand(book.getName());
-            
-            trolleyBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+
+            trolleyBtn.addActionListener(e -> {
                 String bookNameClicked = e.getActionCommand();
-                JOptionPane.showMessageDialog(BookLib.this, "Added " + bookNameClicked + " to the cart.");
-                
-            }
-        });
+                askAdminForPermission(bookNameClicked);
+            });
             
             JPanel namePanel = new JPanel(new BorderLayout());
             namePanel.add(bookName, BorderLayout.CENTER);
@@ -135,6 +115,26 @@ public class BookLib extends JFrame implements ActionListener {
         return bookPanel;
     }
 
+    // Method to ask admin for permission to reserve the book
+    private void askAdminForPermission(String bookNameClicked) {
+        // Dialog to ask for admin password
+        JPasswordField passwordField = new JPasswordField();
+        Object[] message = {
+            "Admin Password:", passwordField
+        };
+
+        int option = JOptionPane.showConfirmDialog(null, message, "Admin Approval", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String enteredPassword = new String(passwordField.getPassword());
+            if (enteredPassword.equals(adminPassword)) {
+                JOptionPane.showMessageDialog(this, "Book '" + bookNameClicked + "' has been reserved successfully.");
+                // Code to reserve the book (e.g., update the database) can be added here
+            } else {
+                JOptionPane.showMessageDialog(this, "Incorrect admin password. Reservation denied.");
+            }
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -147,7 +147,6 @@ public class BookLib extends JFrame implements ActionListener {
             dispose();
         } else if (e.getSource() == topMenubtn) {
             JOptionPane.showMessageDialog(null, "Back to top menu");
-            
             dispose();
         }
     }
@@ -173,12 +172,7 @@ public class BookLib extends JFrame implements ActionListener {
         }
 
         public ImageIcon getImageIcon() {
-//            ImageIcon icon = new ImageIcon(imagePath);
-//            Image image = icon.getImage();
-//            Image newImage = image.getScaledInstance(220, 326, Image.SCALE_SMOOTH);
             return new ImageIcon(imagePath);
-     }
-        
-
+        }
     }
 }

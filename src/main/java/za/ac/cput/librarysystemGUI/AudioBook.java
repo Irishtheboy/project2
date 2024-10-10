@@ -195,6 +195,7 @@ public class AudioBook extends JFrame implements ActionListener {
     }
 
     // Rent a selected book
+// Rent a selected book
     private void rentSelectedBook() {
         int selectedRow = bookTable.getSelectedRow();
         if (selectedRow >= 0) {
@@ -202,17 +203,35 @@ public class AudioBook extends JFrame implements ActionListener {
             boolean isAvailable = "Yes".equals(bookTable.getValueAt(selectedRow, 3));
 
             if (isAvailable) {
-                boolean success = bookDAO.rentBook(UserSession.getLoggedInUserId(), bookId);
-                if (success) {
-                    JOptionPane.showMessageDialog(this, "Book rented successfully!");
-                    rentalCount++;
-                    rentalCountLabel.setText("Books rented: " + rentalCount);
-                    // Update availability in the table
-                    model.setValueAt("No", selectedRow, 3);
-                    // Refresh the rented books table
-                    updateRentedBooksTable();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Failed to rent the book.");
+                // Prompt for admin password before renting
+                JPasswordField passwordField = new JPasswordField();
+                Object[] message = {
+                    "Admin Password:", passwordField
+                };
+
+                int option = JOptionPane.showConfirmDialog(null, message, "Admin Approval", JOptionPane.OK_CANCEL_OPTION);
+
+                if (option == JOptionPane.OK_OPTION) {
+                    String enteredPassword = new String(passwordField.getPassword());
+                    String adminPassword = "admin123"; // Set the admin password here
+
+                    if (enteredPassword.equals(adminPassword)) {
+                        // Proceed with renting the book if the password is correct
+                        boolean success = bookDAO.rentBook(UserSession.getLoggedInUserId(), bookId);
+                        if (success) {
+                            JOptionPane.showMessageDialog(this, "Book rented successfully!");
+                            rentalCount++;
+                            rentalCountLabel.setText("Books rented: " + rentalCount);
+                            // Update availability in the table
+                            model.setValueAt("No", selectedRow, 3);
+                            // Refresh the rented books table
+                            updateRentedBooksTable();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Failed to rent the book.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Incorrect admin password. Rental denied.");
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "This book is already rented out.");
