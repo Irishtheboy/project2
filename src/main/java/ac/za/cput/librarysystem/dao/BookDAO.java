@@ -1,11 +1,13 @@
 package ac.za.cput.librarysystem.dao;
 
 import ac.za.cput.librarysystem.connection.DBConnection;  // Ensure this is your correct DB connection class
+import ac.za.cput.librarysystem.domain.Book;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public class BookDAO {
 
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             ResultSet rs = pstmt.executeQuery();
+            
             while (rs.next()) {
                 Object[] book = new Object[7];
                 book[0] = rs.getInt("bookid");
@@ -42,6 +45,30 @@ public class BookDAO {
 
         return booksList;
     }
+    
+    
+    public List<Book> getAllBookss() {
+    List<Book> bookList = new ArrayList<>();
+    String query = "SELECT title, author, image_path FROM books"; // Ensure this matches your actual table and column names
+
+    try (Connection conn = DBConnection.derbyConnection(); 
+         PreparedStatement pstmt = conn.prepareStatement(query);
+         ResultSet rs = pstmt.executeQuery()) { // Execute the query and get a ResultSet
+
+        while (rs.next()) { // Iterate through the ResultSet
+            String title = rs.getString("title");
+            String author = rs.getString("author");
+            String imagePath = rs.getString("image_path");
+            Book book = new Book(title, author, imagePath);
+            bookList.add(book);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return bookList;
+}
 
     public List<Object[]> getBorrowHistory(int userId) {
         List<Object[]> borrowHistory = new ArrayList<>();
@@ -70,22 +97,24 @@ public class BookDAO {
     }
 
     // Method to add a book to the database
-    public void addBook(String title, String author, String genre, String isbn, int yearPublished, boolean available) {
-        String sql = "INSERT INTO BOOKS (title, author, genre, isbn, published_year, available) VALUES (?, ?, ?, ?, ?, ?)";
+public void addBook(String title, String author, String genre, String isbn, int yearPublished, boolean available, String imagePath) {
+    String sql = "INSERT INTO BOOKS (title, author, genre, isbn, published_year, available, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, title);
-            pstmt.setString(2, author);
-            pstmt.setString(3, genre);
-            pstmt.setString(4, isbn);
-            pstmt.setInt(5, yearPublished);
-            pstmt.setBoolean(6, available);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error adding book: " + e.getMessage());
-        }
+    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setString(1, title);
+        pstmt.setString(2, author);
+        pstmt.setString(3, genre);
+        pstmt.setString(4, isbn);
+        pstmt.setInt(5, yearPublished);
+        pstmt.setBoolean(6, available);
+        pstmt.setString(7, imagePath); // Set the image path
+        pstmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error adding book: " + e.getMessage());
     }
+}
+
 
     public void deleteBook(int bookId) {
         String query = "DELETE FROM BOOKS WHERE bookid = ?";
@@ -287,5 +316,7 @@ public class BookDAO {
 
         return loanedCount;
     }
+    
+    
 
 }

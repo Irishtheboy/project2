@@ -1,30 +1,23 @@
 package za.ac.cput.librarysystemGui;
 
+import ac.za.cput.librarysystem.dao.BookDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BookLib extends JFrame implements ActionListener {
 
     private JButton accountbtn, checkoutbtn, topMenubtn;
-    private List<Book> books;
+    private BookDAO bookDAO; // Assuming you have a BookDAO class to manage book data
+    private List<Book> books; // List to hold the books retrieved from the database
     private String adminPassword = "admin123"; // Admin password for approval
 
-    public BookLib() {  
+    public BookLib() {
+        bookDAO = new BookDAO(); // Initialize your BookDAO
+//        books = bookDAO.getAllBookss(); // Retrieve all books from the database
 
-        books = new ArrayList<>();
-        books.add(new Book("The Hunger Games", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_eight.jpg"));
-        books.add(new Book("Mockingjay", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_six.jpg"));
-        books.add(new Book("Catching Fire", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_five.jpg"));
-        books.add(new Book("The Ballad of Songbirds & Snakes", "Suzanne Collins", "C:/Users/naqee/Documents/GitHub/project2//book_three.jpg"));
-        books.add(new Book("Divergent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_seven.jpg"));
-        books.add(new Book("Insurgent", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_four.jpg"));
-        books.add(new Book("Allegiant", "Veronice Roth", "C:/Users/naqee/Documents/GitHub/project2//first_book.jpg"));
-        books.add(new Book("Four", "Veronica Roth", "C:/Users/naqee/Documents/GitHub/project2//book_two.jpg"));
-       
         setTitle("Book Library");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(880, 600);
@@ -86,7 +79,7 @@ public class BookLib extends JFrame implements ActionListener {
 
             JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
             JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
-            
+
             JButton trolleyBtn = new JButton("Add to cart", new ImageIcon("trolley.png"));
             trolleyBtn.setActionCommand(book.getName());
 
@@ -94,7 +87,7 @@ public class BookLib extends JFrame implements ActionListener {
                 String bookNameClicked = e.getActionCommand();
                 askAdminForPermission(bookNameClicked);
             });
-            
+
             JPanel namePanel = new JPanel(new BorderLayout());
             namePanel.add(bookName, BorderLayout.CENTER);
 
@@ -151,8 +144,8 @@ public class BookLib extends JFrame implements ActionListener {
         }
     }
 
+    // Book class remains unchanged; you might have a separate Book class
     private static class Book {
-
         private String name;
         private String author;
         private String imagePath;
