@@ -2,6 +2,8 @@ package za.ac.cput.librarysystemGui;
 
 import za.ac.cput.librarysystemGUI.AudioBook;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,13 +17,16 @@ public class TopMenu extends JFrame implements ActionListener {
 
     private JPanel pnlCenter;
     private JButton btnBooks, btnAudio;
+    private JLabel lblTitle;
 
     public TopMenu() {
         super("Top Menu");
 
+        // Initialize components
         pnlCenter = new JPanel();
         btnBooks = new JButton("Books");
         btnAudio = new JButton("Audio");
+        lblTitle = new JLabel("Welcome to the library system!", SwingConstants.CENTER); // Center lbl text
 
         setTopMenu();
     }
@@ -60,18 +65,28 @@ public class TopMenu extends JFrame implements ActionListener {
         setJMenuBar(menuBar);
 
         // Set up the main frame
-        this.setVisible(true);
-        this.setSize(400, 100);
+        this.setSize(400, 150); // Increased height to accommodate label
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        pnlCenter.setLayout(new GridLayout(1, 2));
-        pnlCenter.add(btnBooks);
-        pnlCenter.add(btnAudio);
+        // Use BoxLayout for simpler layout management
+        pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.Y_AXIS)); // Vertical layout
 
-        btnBooks.addActionListener(this);
+        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align label
+        pnlCenter.add(lblTitle); // Add label to the panel
+
+        // Create a new JPanel for buttons
+        JPanel btnPanel = new JPanel();
+        btnPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Center buttons in the panel
+        btnBooks.addActionListener(this); // Add action listeners
         btnAudio.addActionListener(this);
+        
+        btnPanel.add(btnBooks); // Add books button
+        btnPanel.add(btnAudio); // Add audio button
 
-        this.add(pnlCenter, BorderLayout.CENTER);
+        pnlCenter.add(btnPanel); // Add button panel to main panel
+
+        this.add(pnlCenter, BorderLayout.CENTER); // Add main panel to frame
+        this.setVisible(true); // Make the frame visible
     }
 
     @Override
@@ -86,4 +101,9 @@ public class TopMenu extends JFrame implements ActionListener {
             dispose();
         }
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TopMenu::new);
+    }
 }
+
