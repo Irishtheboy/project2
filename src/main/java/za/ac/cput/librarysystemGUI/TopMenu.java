@@ -1,6 +1,7 @@
 package za.ac.cput.librarysystemGui;
 
 import za.ac.cput.librarysystemGUI.AudioBook;
+import za.ac.cput.librarysystemGUI.AboutPage;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -57,6 +58,12 @@ public class TopMenu extends JFrame implements ActionListener {
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutPage(); // Open the feedback page
+            }
+        });
         helpMenu.add(aboutItem);
 
         menuBar.add(fileMenu);
