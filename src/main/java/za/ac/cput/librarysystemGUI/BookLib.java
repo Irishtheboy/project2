@@ -250,13 +250,25 @@ private void updateRentedBooksTable() {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    
 
     private void refreshAvailableBooksTable() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+     @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == accountbtn) {
+            new AccountPageGui();
+            dispose();
+        } else if (e.getSource() == checkoutbtn) {
+            JOptionPane.showMessageDialog(null, "Checked out successfully");
+            new CheckoutPage();
+            dispose();
+        } else if (e.getSource() == topMenubtn) {
+            new TopMenu();
+            dispose();
+        }
     }
 
   

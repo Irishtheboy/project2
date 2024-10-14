@@ -1,7 +1,9 @@
 package za.ac.cput.librarysystemGUI;
 
+import ac.za.cput.librarysystem.domain.UserSession;
 import ac.za.cput.librarysystem.dao.UserDAO;
 import ac.za.cput.librarysystem.dao.BookDAO;
+import ac.za.cput.librarysystem.domain.UserSession;
 
 import javax.swing.*;
 
@@ -26,6 +28,8 @@ public class AdminDashBoard extends JFrame {
     private UserDAO userDAO;
     private BookDAO bookDAO;
     private JTextArea feedbackTextArea;
+     private JTable borrowHistoryTable; // JTable for borrow history
+      private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
 
     public AdminDashBoard() {
         userDAO = new UserDAO();  // Initialize UserDAO
@@ -73,6 +77,10 @@ public class AdminDashBoard extends JFrame {
         JPanel usersPanel = new JPanel();
         usersPanel.setLayout(new BorderLayout());
         usersPanel.setBorder(BorderFactory.createTitledBorder("Users"));
+        
+        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
+        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
+        add(tabbedPane, BorderLayout.CENTER);
 
         // Table for Users
         String[] userColumnNames = {"User ID", "Username", "Email", "Role"};
@@ -195,6 +203,25 @@ public class AdminDashBoard extends JFrame {
         }
 
         feedbackTextArea.setText(feedbackContent.toString());
+    }
+     private JPanel createBorrowHistoryPanel() {
+        JPanel historyPanel = new JPanel(new BorderLayout());
+
+        // Column Names for Borrow History Table
+        String[] historyColumnNames = {"Book ID", "Title", "Author", "Borrow Date", "Return Date"};
+        borrowHistoryModel = new DefaultTableModel(historyColumnNames, 0);
+
+        // Fetch borrow history data from the database and populate the table
+        List<Object[]> borrowHistory = bookDAO.getBorrowHistory(UserSession.getLoggedInUserId());
+        for (Object[] historyEntry : borrowHistory) {
+            borrowHistoryModel.addRow(historyEntry);
+        }
+
+        borrowHistoryTable = new JTable(borrowHistoryModel);
+        JScrollPane scrollPane = new JScrollPane(borrowHistoryTable);
+        historyPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return historyPanel;
     }
 
     private void showAddBookDialog() {
