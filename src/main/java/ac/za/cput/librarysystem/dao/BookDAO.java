@@ -25,7 +25,7 @@ public class BookDAO {
 
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             ResultSet rs = pstmt.executeQuery();
-            
+
             while (rs.next()) {
                 Object[] book = new Object[7];
                 book[0] = rs.getInt("bookid");
@@ -45,37 +45,34 @@ public class BookDAO {
 
         return booksList;
     }
-    
-    
+
     public List<Book> getAllBookss() {
-    List<Book> bookList = new ArrayList<>();
-    String query = "SELECT title, author, image_path FROM books"; // Ensure this matches your actual table and column names
+        List<Book> bookList = new ArrayList<>();
+        String query = "SELECT title, author, image_path FROM books"; // Ensure this matches your actual table and column names
 
-    try (Connection conn = DBConnection.derbyConnection(); 
-         PreparedStatement pstmt = conn.prepareStatement(query);
-         ResultSet rs = pstmt.executeQuery()) { // Execute the query and get a ResultSet
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) { // Execute the query and get a ResultSet
 
-        while (rs.next()) { // Iterate through the ResultSet
-            String title = rs.getString("title");
-            String author = rs.getString("author");
-            String imagePath = rs.getString("image_path");
-            Book book = new Book(title, author, imagePath);
-            bookList.add(book);
+            while (rs.next()) { // Iterate through the ResultSet
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String imagePath = rs.getString("image_path");
+                Book book = new Book(title, author, imagePath);
+                bookList.add(book);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return bookList;
     }
-
-    return bookList;
-}
 
     public List<Object[]> getBorrowHistory(int userId) {
         List<Object[]> borrowHistory = new ArrayList<>();
         String query = "SELECT b.BOOKID, b.TITLE, b.AUTHOR, r.RENT_DATE, r.RETURN_DATE "
                 + "FROM BOOKS b "
                 + "JOIN RENTALS r ON b.BOOKID = r.BOOKID "
-                + "WHERE r.USERID = ? AND r.STATUS = 'returned'"; 
+                + "WHERE r.USERID = ? AND r.STATUS = 'returned'";
 
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, userId);
@@ -97,24 +94,23 @@ public class BookDAO {
     }
 
     // Method to add a book to the database
-public void addBook(String title, String author, String genre, String isbn, int yearPublished, boolean available, String imagePath) {
-    String sql = "INSERT INTO BOOKS (title, author, genre, isbn, published_year, available, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public void addBook(String title, String author, String genre, String isbn, int yearPublished, boolean available, String imagePath) {
+        String sql = "INSERT INTO BOOKS (title, author, genre, isbn, published_year, available, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        pstmt.setString(1, title);
-        pstmt.setString(2, author);
-        pstmt.setString(3, genre);
-        pstmt.setString(4, isbn);
-        pstmt.setInt(5, yearPublished);
-        pstmt.setBoolean(6, available);
-        pstmt.setString(7, imagePath); // Set the image path
-        pstmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error adding book: " + e.getMessage());
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, author);
+            pstmt.setString(3, genre);
+            pstmt.setString(4, isbn);
+            pstmt.setInt(5, yearPublished);
+            pstmt.setBoolean(6, available);
+            pstmt.setString(7, imagePath); // Set the image path
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error adding book: " + e.getMessage());
+        }
     }
-}
-
 
     public void deleteBook(int bookId) {
         String query = "DELETE FROM BOOKS WHERE bookid = ?";
@@ -154,6 +150,34 @@ public void addBook(String title, String author, String genre, String isbn, int 
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean rentBookByUsername(String username, int bookId) {
+        // Create an instance of UserDAO (if not already done in your class)
+        UserDAO userDAO = new UserDAO();
+
+        // First, check if the user exists
+        if (userDAO.getUserUsername(username) == null) {
+            JOptionPane.showMessageDialog(null, "User does not exist.");
+            return false;
+        }
+
+        // Then, check if the book is available
+        if (!isBookAvailable(bookId)) {
+            JOptionPane.showMessageDialog(null, "Book is not available for rent.");
+            return false;
+        }
+
+        String insertRentSQL = "INSERT INTO RENTALS (username, bookid, rent_date) VALUES (?, ?, CURRENT_DATE)";
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertRentSQL)) {
+            pstmt.setString(1, username);
+            pstmt.setInt(2, bookId);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0; // Return true if rental was successful
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error renting book: " + e.getMessage());
+            return false; // Rental failed
+        }
     }
 
     public boolean rentBook(int userId, int bookId) {
@@ -316,7 +340,5 @@ public void addBook(String title, String author, String genre, String isbn, int 
 
         return loanedCount;
     }
-    
-    
 
 }

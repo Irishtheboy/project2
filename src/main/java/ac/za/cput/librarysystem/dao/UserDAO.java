@@ -121,6 +121,22 @@ public class UserDAO {
         }
     }
 
+    public int getUserIdByUsername(String username) {
+        String query = "SELECT userid FROM USERS WHERE username = ?";
+        int userId = -1;
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("userid");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching user ID: " + e.getMessage());
+        }
+        return userId;
+    }
+
     public String getUserUsername(String username) {
         String query = "SELECT username FROM USERS WHERE username = ?";
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -150,33 +166,71 @@ public class UserDAO {
     }
 
     public boolean rentBookByUsername(String username, int bookId) {
-        String insertRentSQL = "INSERT INTO RENTALS (username, bookid, rent_date) VALUES (?, ?, CURRENT_DATE)";
-        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertRentSQL)) {
+        // Step 1: Get the USERID based on the username
+        String getUserIdSQL = "SELECT userid FROM USERS WHERE username = ?";
+        int userId = -1;
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(getUserIdSQL)) {
             pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("userid");
+            } else {
+                JOptionPane.showMessageDialog(null, "User not found.");
+                return false;
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching user ID: " + e.getMessage());
+            return false;
+        }
+
+        // Step 2: Rent the book using the USERID
+        String insertRentSQL = "INSERT INTO RENTALS (userid, bookid, rent_date) VALUES (?, ?, CURRENT_DATE)";
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertRentSQL)) {
+            pstmt.setInt(1, userId);
             pstmt.setInt(2, bookId);
             int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0; // Return true if rental was successful
+            return rowsAffected > 0;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error renting book: " + e.getMessage());
-            return false; // Rental failed
+            return false;
         }
     }
 
     public List<Object[]> getUserAccountDetails(String username) {
-        String query = "SELECT COUNT(CASE WHEN return_date IS NULL THEN 1 END) AS overdue_books, "
-                + "SUM(CASE WHEN return_date IS NULL THEN fine ELSE 0 END) AS total_fine, "
-                + "COUNT(*) AS total_loaned_books "
-                + "FROM RENTALS WHERE username = ?";
-        List<Object[]> accountDetails = new ArrayList<>();
+        // Step 1: Get the USERID based on the username
+        String getUserIdSQL = "SELECT userid FROM USERS WHERE username = ?";
+        int userId = -1;
 
-        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(getUserIdSQL)) {
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
+                userId = rs.getInt("userid");
+            } else {
+                JOptionPane.showMessageDialog(null, "User not found.");
+                return null;
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error fetching user ID: " + e.getMessage());
+            return null;
+        }
+
+        // Step 2: Fetch account details using USERID
+        String query = "SELECT COUNT(CASE WHEN return_date IS NULL THEN 1 END) AS overdue_books, "
+                + "SUM(CASE WHEN return_date IS NULL THEN fine ELSE 0 END) AS total_fine, "
+                + "COUNT(*) AS total_loaned_books "
+                + "FROM RENTALS WHERE userid = ?";
+        List<Object[]> accountDetails = new ArrayList<>();
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
                 Object[] details = new Object[3];
-                details[0] = rs.getInt("overdue_books");      // Number of overdue books
-                details[1] = rs.getDouble("total_fine");      // Total fine amount
-                details[2] = rs.getInt("total_loaned_books"); // Total loaned books
+                details[0] = rs.getInt("overdue_books");
+                details[1] = rs.getDouble("total_fine");
+                details[2] = rs.getInt("total_loaned_books");
                 accountDetails.add(details);
             }
         } catch (SQLException e) {
@@ -184,22 +238,21 @@ public class UserDAO {
         }
         return accountDetails;
     }
-    
-      public boolean payFine(int userId) {
+
+    public boolean payFine(int userId) {
         String query = "UPDATE FINES SET IS_PAID = TRUE WHERE USERID = ? AND IS_PAID = FALSE";
-        
-        try (Connection conn = DBConnection.derbyConnection(); 
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, userId);
             int rowsUpdated = pstmt.executeUpdate();
-            
+
             if (rowsUpdated > 0) {
                 return true; // Fine paid successfully
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return false; // Failed to pay fine
     }
 
@@ -208,8 +261,7 @@ public class UserDAO {
         String query = "SELECT SUM(FINE_AMOUNT) AS totalFine FROM FINES WHERE USERID = ? AND IS_PAID = FALSE";
         double fineAmount = 0;
 
-        try (Connection conn = DBConnection.derbyConnection(); 
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, userId);
             ResultSet rs = pstmt.executeQuery();
 
@@ -222,7 +274,5 @@ public class UserDAO {
 
         return fineAmount;
     }
-    
-    
 
 }
