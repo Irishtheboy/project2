@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class FeedbackPage extends JFrame {
 
     private JTextField nameField, surnameField;
+    private JButton submitBtn, returnToMenuBtn; // Button to return to the top menu
 
     public FeedbackPage() {
         super("Feedback");
@@ -28,10 +29,12 @@ public class FeedbackPage extends JFrame {
 
         // Feedback text area
         JTextArea feedbackArea = new JTextArea(10, 30);
+        feedbackArea.setLineWrap(true);
+        feedbackArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(feedbackArea);
 
         // Submit button
-        JButton submitBtn = new JButton("Submit");
+        submitBtn = new JButton("Submit");
         submitBtn.addActionListener(e -> {
             String name = nameField.getText();
             String surname = surnameField.getText();
@@ -48,13 +51,36 @@ public class FeedbackPage extends JFrame {
             }
         });
 
-        // Adding components to the layout
-        add(userInfoPanel, BorderLayout.NORTH);
-        add(new JLabel("Please provide your feedback:"), BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.CENTER);
-        add(submitBtn, BorderLayout.SOUTH);
+        // Return to TopMenu button
+        returnToMenuBtn = new JButton("Return to TopMenu");
+        returnToMenuBtn.addActionListener(e -> {
+            new TopMenu(); // Assuming TopMenu is another JFrame
+            dispose(); // Close this page
+        });
 
-        setLocationRelativeTo(null);
+        // Main panel to hold all sections
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        // Create a panel to hold user info and feedback section
+        JPanel feedbackPanel = new JPanel();
+        feedbackPanel.setLayout(new BorderLayout());
+        feedbackPanel.add(userInfoPanel, BorderLayout.NORTH);
+        feedbackPanel.add(new JLabel("Please provide your feedback:"), BorderLayout.CENTER);
+        feedbackPanel.add(scrollPane, BorderLayout.SOUTH);
+
+        // Adding components to the main panel
+        mainPanel.add(feedbackPanel, BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(1, 2)); // Two buttons side by side
+        buttonPanel.add(submitBtn);
+        buttonPanel.add(returnToMenuBtn);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH); // Add button panel at the bottom
+
+        // Adding main panel to the frame
+        add(mainPanel);
+
+        setLocationRelativeTo(null); // Center the frame
         setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
@@ -80,4 +106,5 @@ public class FeedbackPage extends JFrame {
             JOptionPane.showMessageDialog(this, "Error saving your feedback, kindly try again :)");
         }
     }
+
 }
