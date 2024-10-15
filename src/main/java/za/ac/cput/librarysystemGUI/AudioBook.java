@@ -28,6 +28,7 @@ public class AudioBook extends JFrame implements ActionListener {
     private JTextField searchField;
     private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
     private JTable borrowHistoryTable; // JTable for borrow history
+    
 
     public AudioBook() {
         bookDAO = new BookDAO();

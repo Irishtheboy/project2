@@ -182,6 +182,7 @@ public class BookDAO {
 
     public boolean rentBook(int userId, int bookId) {
         String updateBookAvailability = "UPDATE books SET available = false WHERE bookid = ?";
+        String selectUser = "SELECT * FROM ADMINISTRATOR.USERS WHERE USERID = ?";
         String insertRentalRecord = "INSERT INTO rentals (userid, bookid, rent_date, return_date, status) VALUES (?, ?, CURRENT_DATE, ?, 'active')";
 
         try (Connection connection = DBConnection.derbyConnection()) {
