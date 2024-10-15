@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class FeedbackPage extends JFrame {
 
     private JTextField nameField, surnameField;
-    private JButton submitBtn, returnToMenuBtn; // Button to return to the top menu
+    private JButton submitBtn, returnToMenuBtn, btnLogout; // Button to return to the top menu
 
     public FeedbackPage() {
         super("Feedback");
@@ -50,9 +50,21 @@ public class FeedbackPage extends JFrame {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields.");
             }
         });
+        
+         // Add Logout Button to the Top
+        btnLogout = new JButton("Logout");
+       // JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        //add(logoutPanel, BorderLayout.NORTH);  // Adding the logout button panel to the north of the frame
+        
+        // Logout Button Action Listener
+        btnLogout.addActionListener(e -> {
+            dispose();  // Close the current Admin Dashboard window
+            //new LoginPage().setVisible(true);  // Open the login page
+        });
 
         // Return to TopMenu button
-        returnToMenuBtn = new JButton("Return to TopMenu");
+        returnToMenuBtn = new JButton("Top Menu");
         returnToMenuBtn.addActionListener(e -> {
             new TopMenu(); // Assuming TopMenu is another JFrame
             dispose(); // Close this page
@@ -75,6 +87,7 @@ public class FeedbackPage extends JFrame {
         buttonPanel.setLayout(new GridLayout(1, 2)); // Two buttons side by side
         buttonPanel.add(submitBtn);
         buttonPanel.add(returnToMenuBtn);
+        buttonPanel.add(btnLogout);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH); // Add button panel at the bottom
 
         // Adding main panel to the frame

@@ -181,6 +181,16 @@ public class BookDAO {
     }
 
     public boolean rentBook(int userId, int bookId) {
+        
+        // Check if the user already has 3 active rentals
+        if (getLoanedBooksCount(userId) >= 3) {
+            JOptionPane.showMessageDialog(null, 
+                "You cannot rent more than 3 books at a time.", 
+                "Rental Limit Exceeded", 
+                JOptionPane.WARNING_MESSAGE);
+            return false; // Limit exceeded, rental not allowed
+        }
+        
         String updateBookAvailability = "UPDATE books SET available = false WHERE bookid = ?";
         String insertRentalRecord = "INSERT INTO rentals (userid, bookid, rent_date, return_date, status) VALUES (?, ?, CURRENT_DATE, ?, 'active')";
 

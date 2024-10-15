@@ -5,6 +5,8 @@ import ac.za.cput.librarysystem.dao.UserDAO;
 import ac.za.cput.librarysystem.dao.BookDAO;
 import ac.za.cput.librarysystem.domain.UserSession;
 
+import za.ac.cput.librarysystemGui.LoginPage;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -24,7 +26,7 @@ public class AdminDashBoard extends JFrame {
 
     private JTable booksTable;
     private JTable usersTable;
-    private JButton btnAddBook, btnDeleteBook, btnAddUser, btnDeleteUser;
+    private JButton btnAddBook, btnDeleteBook, btnAddUser, btnDeleteUser, btnLogout;
     private UserDAO userDAO;
     private BookDAO bookDAO;
     private JTextArea feedbackTextArea;
@@ -116,6 +118,12 @@ public class AdminDashBoard extends JFrame {
 
         // Add the tabbed pane to the main frame
         add(tabbedPane, BorderLayout.CENTER);
+        
+        // Add Logout Button to the Top
+        btnLogout = new JButton("Logout");
+        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        logoutPanel.add(btnLogout);
+        add(logoutPanel, BorderLayout.NORTH);  // Adding the logout button panel to the north of the frame
 
         // Fetch data and populate tables
         populateBooksTable();
@@ -130,6 +138,12 @@ public class AdminDashBoard extends JFrame {
         btnAddBook.addActionListener(e -> showAddBookDialog());
         btnDeleteBook.addActionListener(e -> deleteSelectedBook());
         btnDeleteUser.addActionListener(e -> deleteSelectedUser());
+    
+        // Logout Button Action Listener
+        btnLogout.addActionListener(e -> {
+            dispose();  // Close the current Admin Dashboard window
+            new LoginPage().setVisible(true);  // Open the login page
+        });
     }
 
     private void setTableColumnWidths(JTable table) {

@@ -1,20 +1,22 @@
 package za.ac.cput.librarysystemGUI;
+
 import za.ac.cput.librarysystemGui.TopMenu;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- *
- * @author pholo
- */
+
+
 public class AboutPage extends JFrame implements ActionListener {
 
     private JButton backButton; 
+    private TopMenu topMenu; // Store the reference to TopMenu
 
-    public AboutPage() {
+    // Constructor with TopMenu as argument
+    public AboutPage(TopMenu topMenu) {
         super("About");
+        this.topMenu = topMenu;  // Store TopMenu reference
 
         // Set layout
         setLayout(new BorderLayout());
@@ -27,8 +29,9 @@ public class AboutPage extends JFrame implements ActionListener {
             "The library system aims to streamline book management and user account services, allowing " +
             "efficient check-out, return, and payment of overdue fines for a better library experience."
         );
-       
         txtPurpose.setEditable(false);
+        txtPurpose.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+       
         pnlPurpose.add(lblPurposeTitle);
         pnlPurpose.add(txtPurpose);
 
@@ -49,6 +52,7 @@ public class AboutPage extends JFrame implements ActionListener {
         );
         txtFAQs.setEditable(false);
         txtFAQs.setPreferredSize(new Dimension(450, 250)); // Adjust height for more content
+        txtFAQs.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
 
         pnlFAQs.add(lblFAQsTitle, BorderLayout.NORTH);
         pnlFAQs.add(txtFAQs, BorderLayout.CENTER);
@@ -62,6 +66,7 @@ public class AboutPage extends JFrame implements ActionListener {
             + "Email: support@librarysystem.com"
         );
         txtContact.setEditable(false);
+        txtContact.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
         pnlContact.add(lblContactTitle);
         pnlContact.add(txtContact);
 
@@ -83,17 +88,23 @@ public class AboutPage extends JFrame implements ActionListener {
         setSize(500, 450);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        // Set default close operation
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+
+    // Overloaded constructor without TopMenu argument
+    public AboutPage() {
+        this(null);  // Call the original constructor, passing null for TopMenu
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == backButton) {
-            // Open TopMenu and dispose of the current window (AboutPage)
-            new TopMenu();
+            if (topMenu != null) {
+                topMenu.setVisible(true); // Make TopMenu visible again
+            }
             dispose(); // Close AboutPage
         }
     }
-
-
-    
 }
