@@ -77,7 +77,7 @@ public class LoginPage extends JFrame {
         mainPanel.add(signUpPanel);
     }
 
-    // Teyanah & Franco
+    // Teyana & Franco
     private void addListeners() {
         btnLogin.addActionListener(new ActionListener() {
             @Override
