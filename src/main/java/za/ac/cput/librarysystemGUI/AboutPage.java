@@ -3,21 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package za.ac.cput.librarysystemGUI;
-<<<<<<< HEAD
 
-/**
- *
- * @author Franco
- */
-public class AboutPage {
-    
-=======
 
 import za.ac.cput.librarysystemGui.TopMenu;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+/**
+ *
+ * @author Franco
+ */
+
+    
+
+
 
 
 
@@ -120,5 +120,5 @@ public class AboutPage extends JFrame implements ActionListener {
             dispose(); // Close AboutPage
         }
     }
->>>>>>> b0d6d27e62359d29b32498a230eb6ba978e358eb
+
 }
