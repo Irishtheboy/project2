@@ -197,50 +197,52 @@ public class AudioBook extends JFrame implements ActionListener {
 
     // Rent a selected book
 // Rent a selected book
-    private void rentSelectedBook() {
-        int selectedRow = bookTable.getSelectedRow();
-        if (selectedRow >= 0) {
-            int bookId = (int) bookTable.getValueAt(selectedRow, 0);
-            boolean isAvailable = "Yes".equals(bookTable.getValueAt(selectedRow, 3));
+private void rentSelectedBook() {
+    int selectedRow = bookTable.getSelectedRow();
+    if (selectedRow >= 0) {
+        int bookId = (int) bookTable.getValueAt(selectedRow, 0);
+        boolean isAvailable = "Yes".equals(bookTable.getValueAt(selectedRow, 3));
 
-            if (isAvailable) {
-                // Prompt for admin password before renting
-                JPasswordField passwordField = new JPasswordField();
-                Object[] message = {
-                    "Admin Password:", passwordField
-                };
+        if (isAvailable) {
+            // Prompt for admin password before renting
+            JPasswordField passwordField = new JPasswordField();
+            Object[] message = {
+                "Admin Password:", passwordField
+            };
 
-                int option = JOptionPane.showConfirmDialog(null, message, "Admin Approval", JOptionPane.OK_CANCEL_OPTION);
+            int option = JOptionPane.showConfirmDialog(null, message, "Admin Approval", JOptionPane.OK_CANCEL_OPTION);
 
-                if (option == JOptionPane.OK_OPTION) {
-                    String enteredPassword = new String(passwordField.getPassword());
-                    String adminPassword = "admin123"; // Set the admin password here
+            if (option == JOptionPane.OK_OPTION) {
+                String enteredPassword = new String(passwordField.getPassword());
+                String adminPassword = "admin123"; // Set the admin password here
 
-                    if (enteredPassword.equals(adminPassword)) {
-                        // Proceed with renting the book if the password is correct
-                        boolean success = bookDAO.rentBook(UserSession.getLoggedInUserId(), bookId);
-                        if (success) {
-                            JOptionPane.showMessageDialog(this, "Book rented successfully!");
-                            rentalCount++;
-                            rentalCountLabel.setText("Books rented: " + rentalCount);
-                            // Update availability in the table
-                            model.setValueAt("No", selectedRow, 3);
-                            // Refresh the rented books table
-                            updateRentedBooksTable();
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Failed to rent the book.");
-                        }
+                if (enteredPassword.equals(adminPassword)) {
+                    // Proceed with renting the book if the password is correct
+                    int userId = UserSession.getLoggedInUserId(); // Get the logged-in user ID
+                    boolean success = bookDAO.rentBook(userId, bookId); // Pass the userId here
+                    if (success) {
+                        JOptionPane.showMessageDialog(this, "Book rented successfully!");
+                        rentalCount++;
+                        rentalCountLabel.setText("Books rented: " + rentalCount);
+                        // Update availability in the table
+                        model.setValueAt("No", selectedRow, 3);
+                        // Refresh the rented books table
+                        updateRentedBooksTable();
                     } else {
-                        JOptionPane.showMessageDialog(this, "Incorrect admin password. Rental denied.");
+                        JOptionPane.showMessageDialog(this, "Failed to rent the book.");
                     }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Incorrect admin password. Rental denied.");
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "This book is already rented out.");
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Please select a book to rent.");
+            JOptionPane.showMessageDialog(this, "This book is already rented out.");
         }
+    } else {
+        JOptionPane.showMessageDialog(this, "Please select a book to rent.");
     }
+}
+
 
     // Return a selected book
     private void returnSelectedBook() {

@@ -122,20 +122,27 @@ public class UserDAO {
     }
 
     public int getUserIdByUsername(String username) {
-        String query = "SELECT userid FROM USERS WHERE username = ?";
-        int userId = -1;
+    int userId = -1; // Default value if not found
+    String sql = "SELECT USERID FROM USERS WHERE CAST(USERNAME AS VARCHAR(128)) = ?";
 
-        try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, username);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                userId = rs.getInt("userid");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error fetching user ID: " + e.getMessage());
+    try (Connection connection = DBConnection.derbyConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (resultSet.next()) {
+            userId = resultSet.getInt("USERID");
+        } else {
+            System.out.println("No user found with username: " + username);
         }
-        return userId;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return userId;
+}
+
+
 
     public String getUserUsername(String username) {
         String query = "SELECT username FROM USERS WHERE username = ?";

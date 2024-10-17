@@ -1,5 +1,7 @@
 package ac.za.cput.librarysystem.domain;
 
+import ac.za.cput.librarysystem.dao.UserDAO;
+
 public class UserSession {
     private static String loggedInUsername;
     private static int loggedInUserId;
@@ -18,5 +20,16 @@ public class UserSession {
 
     public static void setLoggedInUserId(int userId) {
         loggedInUserId = userId;
+    }
+
+    // New method to retrieve user ID from the database
+    public static void retrieveAndSetUserId() {
+        UserDAO userDAO = new UserDAO();
+        int userId = userDAO.getUserIdByUsername(loggedInUsername); // Call your existing method
+        if (userId != -1) {
+            setLoggedInUserId(userId); // Set the user ID if found
+        } else {
+            System.out.println("User ID not found for username: " + loggedInUsername);
+        }
     }
 }

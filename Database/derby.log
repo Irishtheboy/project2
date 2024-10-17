@@ -1,20 +1,14 @@
-Wed Oct 16 10:43:35 SAST 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+Thu Oct 17 13:35:29 SAST 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Wed Oct 16 10:43:38 SAST 2024:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0192-947f-2db1-ffff85a68b67 
-on database directory C:\Users\Franco\Documents\GitHub\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
-Loaded from file:/C:/Program%20Files/Java/jdk-20/Db/db-derby-10.14.2.0-bin/lib/derby.jar
+Thu Oct 17 13:35:29 SAST 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0192-9a42-e8a0-ffffdd3c46e0 
+on database directory C:\Users\naqee\Documents\GitHub\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@70dea4e 
+Loaded from file:/C:/Program%20Files/Java/jdk-23/Db/db-derby-10.14.2.0-bin/lib/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=17.0.11+7-LTS-207
-user.dir=C:\Program Files\Java\jdk-20\Db\db-derby-10.14.2.0-bin
-os.name=Windows 10
+java.runtime.version=23+37-2369
+user.dir=C:\Program Files\Java\jdk-23\Db\db-derby-10.14.2.0-bin
+os.name=Windows 11
 os.arch=amd64
 os.version=10.0
-derby.system.home=C:\Users\Franco\Documents\GitHub\project2\Database
+derby.system.home=C:\Users\naqee\Documents\GitHub\project2\Database
 Database Class Loader started - derby.database.classpath=''
-----------------------------------------------------------------
-Wed Oct 16 10:47:11 SAST 2024: Shutting down Derby engine
-----------------------------------------------------------------
-Wed Oct 16 10:47:11 SAST 2024:
-Shutting down instance a816c00e-0192-947f-2db1-ffff85a68b67 on database directory C:\Users\Franco\Documents\GitHub\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
-----------------------------------------------------------------

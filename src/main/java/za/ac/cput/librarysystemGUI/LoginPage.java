@@ -77,45 +77,54 @@ public class LoginPage extends JFrame {
         mainPanel.add(signUpPanel);
     }
 
-    // Teyana & Franco
-    private void addListeners() {
-        btnLogin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = userText.getText();
-                String password = new String(passwordText.getPassword());
+private void addListeners() {
+    btnLogin.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String username = userText.getText();
+            String password = new String(passwordText.getPassword());
 
-                UserDAO userDAO = new UserDAO();
-                String role = userDAO.validateLogin(username, password);
+            UserDAO userDAO = new UserDAO();
+            String role = userDAO.validateLogin(username, password);
 
-                if (role != null) {
-                    JOptionPane.showMessageDialog(null, "Welcome!");
+            if (role != null) {
+                JOptionPane.showMessageDialog(null, "Welcome!");
 
-                    if ("admin".equalsIgnoreCase(role)) {
-                        System.out.println("Admin logged in");
-                        AdminDashBoard adminDashboard = new AdminDashBoard();
-                        adminDashboard.setVisible(true);  // Make the admin dashboard visible
-                    } else {
-                        System.out.println("User logged in");
-                        new TopMenu().setVisible(true);  // Redirect to regular user page
-                    }
+                // Set the logged-in username
+                UserSession.setLoggedInUsername(username);
 
-                    UserSession.setLoggedInUsername(username);  // Set the logged-in user session
-                    dispose();
+                // Retrieve and set the user ID
+                UserSession.retrieveAndSetUserId();
+
+                // Check if the user ID was set successfully
+                int userId = UserSession.getLoggedInUserId();
+                System.out.println("User ID retrieved after login: " + userId); // Debugging output
+
+                if ("admin".equalsIgnoreCase(role)) {
+                    System.out.println("Admin logged in");
+                    AdminDashBoard adminDashboard = new AdminDashBoard();
+                    adminDashboard.setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                    System.out.println("User logged in");
+                    new TopMenu().setVisible(true);  // Redirect to regular user page
                 }
-            }
-        });
 
-        signUpLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                new SignupPageGui().setVisible(true);
-                dispose();
+                dispose();  // Close the login window
+            } else {
+                JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
-        });
-    }
+        }
+    });
+
+    signUpLabel.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            new SignupPageGui().setVisible(true);
+            dispose();
+        }
+    });
+}
+
 
     private void finalizeLayout() {
         setSize(400, 300);
