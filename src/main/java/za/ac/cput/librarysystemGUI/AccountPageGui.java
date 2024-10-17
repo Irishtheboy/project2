@@ -23,6 +23,9 @@ public class AccountPageGui extends JFrame implements ActionListener {
     private String username;
     private int userId;
 
+  
+    private static final Color BUTTON_HOVER_COLOR = Color.DARK_GRAY;
+
     public AccountPageGui(int userId, String username) {
         super("Account");
         this.userId = userId;
@@ -44,12 +47,18 @@ public class AccountPageGui extends JFrame implements ActionListener {
         feedbackBtn = new JButton("Feedback");
         logOutBtn = new JButton("Log Out");
         paymentsBtn = new JButton("Pay");
+        
+        topMenuBtn.setBackground(new Color(144, 238, 144));
+        feedbackBtn.setBackground(new Color(144, 238, 144));
+        logOutBtn.setBackground(new Color(144, 238, 144));
+        paymentsBtn.setBackground(new Color(144, 238, 144));
 
         pnlSouth = new JPanel();
         pnlNorth = new JPanel();
         pnlCenter = new JPanel();
 
         lblAccount = new JLabel("Account Overview", SwingConstants.CENTER);
+        
 
         feedbackBtn.addActionListener(this);
         topMenuBtn.addActionListener(this);
@@ -123,6 +132,8 @@ public class AccountPageGui extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+   
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == logOutBtn) {
@@ -167,3 +178,4 @@ public class AccountPageGui extends JFrame implements ActionListener {
         }
     }
 }
+

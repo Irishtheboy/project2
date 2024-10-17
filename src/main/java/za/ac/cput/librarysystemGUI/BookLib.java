@@ -29,7 +29,7 @@ public class BookLib extends JFrame implements ActionListener {
     private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
     private JTable borrowHistoryTable; // JTable for borrow history
     
-        private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 16);
+    private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 16);
     private static final Color BUTTON_COLOR = Color.BLUE;
     private static final Color BUTTON_HOVER_COLOR = Color.DARK_GRAY;
     private static final Color TABLE_BACKGROUND_COLOR = Color.WHITE;
@@ -188,6 +188,7 @@ public class BookLib extends JFrame implements ActionListener {
         searchPanel.add(new JLabel("Search Book:")); // Label for search
         searchPanel.add(searchField); // Add text field to panel
         searchPanel.add(searchButton); // Add search button to panel
+        searchButton.setBackground(new Color(255, 216, 1));
 
         searchButton.addActionListener(e -> searchBooks()); // Add action listener to search button
 

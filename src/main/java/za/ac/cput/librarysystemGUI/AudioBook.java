@@ -29,6 +29,12 @@ public class AudioBook extends JFrame implements ActionListener {
     private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
     private JTable borrowHistoryTable; // JTable for borrow history
 
+    private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 16);
+    private static final Color BUTTON_COLOR = Color.BLUE;
+    private static final Color BUTTON_HOVER_COLOR = Color.DARK_GRAY;
+    private static final Color TABLE_BACKGROUND_COLOR = Color.WHITE;
+    private static final Color TABLE_SELECTION_BACKGROUND = Color.LIGHT_GRAY;
+    
     public AudioBook() {
         bookDAO = new BookDAO();
 
@@ -49,12 +55,12 @@ public class AudioBook extends JFrame implements ActionListener {
 
         JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         loggedInUserLabel = new JLabel("Logged in as: " + UserSession.getLoggedInUsername());
-        loggedInUserLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        loggedInUserLabel.setFont(DEFAULT_FONT);
         userPanel.add(loggedInUserLabel);
 
         JPanel rentalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rentalCountLabel = new JLabel("Books rented: " + rentalCount);
-        rentalCountLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        loggedInUserLabel.setFont(DEFAULT_FONT);
         rentalPanel.add(rentalCountLabel);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -66,6 +72,11 @@ public class AudioBook extends JFrame implements ActionListener {
         accountbtn = new JButton("Account");
         checkoutbtn = new JButton("Check out");
         topMenubtn = new JButton("Top Menu");
+        
+         // Set button colors and hover effects
+        styleButton(accountbtn);
+        styleButton(checkoutbtn);
+        styleButton(topMenubtn);
 
         bottomPanel.add(accountbtn);
         bottomPanel.add(checkoutbtn);
@@ -127,6 +138,8 @@ public class AudioBook extends JFrame implements ActionListener {
         }
 
         bookTable = new JTable(model);
+        bookTable.setBackground(TABLE_BACKGROUND_COLOR);
+        bookTable.setSelectionBackground(TABLE_SELECTION_BACKGROUND);
         JScrollPane scrollPane = new JScrollPane(bookTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
@@ -280,6 +293,22 @@ public class AudioBook extends JFrame implements ActionListener {
         for (Object[] book : books) {
             model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"});
         }
+    }
+    
+    // Style buttons
+    private void styleButton(JButton button) {
+        button.setBackground(BUTTON_COLOR);
+        button.setForeground(Color.WHITE);
+        button.setBorderPainted(false); // Remove default border
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(BUTTON_HOVER_COLOR);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(BUTTON_COLOR);
+            }
+        });
     }
 
     @Override
