@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import za.ac.cput.librarysystemGui.AccountPageGui;
 import za.ac.cput.librarysystemGui.CheckoutPage;
+import za.ac.cput.librarysystemGui.FeedbackPage;
 import za.ac.cput.librarysystemGui.TopMenu;
 
 public class BookLib extends JFrame implements ActionListener {
@@ -96,11 +97,40 @@ public class BookLib extends JFrame implements ActionListener {
 
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> System.exit(0));
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // Exit the application
+            }
+        });
         fileMenu.add(exitItem);
+        
+        // Add Feedback option to the file menu
+        JMenuItem feedbackItem = new JMenuItem("Feedback");
+        feedbackItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FeedbackPage(); // Open the feedback page
+            }
+        });
+        fileMenu.add(feedbackItem); // Add the feedback item to the file menu
+
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutPage(); // Open the feedback page
+            }
+        });
+        helpMenu.add(aboutItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+
         setJMenuBar(menuBar);
     }
 

@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 
 public class AccountPageGui extends JFrame implements ActionListener {
 
-    private JButton topMenuBtn, checkOutBtn, logOutBtn, paymentsBtn;
+    private JButton topMenuBtn, feedbackBtn, logOutBtn, paymentsBtn;
     private JPanel pnlSouth, pnlNorth, pnlCenter;
     private JLabel lblAccount, lblFees;
     private BufferedImage backgroundImage;
@@ -24,9 +22,6 @@ public class AccountPageGui extends JFrame implements ActionListener {
     private BookDAO bookDAO;
     private String username;
     private int userId;
-    private JTable accountTable;
-    private JScrollPane scrollPane;
-    private JButton feedbackBtn;
 
     public AccountPageGui(int userId, String username) {
         super("Account");
@@ -46,7 +41,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         }
 
         topMenuBtn = new JButton("Top Menu");
-        checkOutBtn = new JButton("Feedback");
+        feedbackBtn = new JButton("Feedback");
         logOutBtn = new JButton("Log Out");
         paymentsBtn = new JButton("Pay");
 
@@ -54,37 +49,15 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlNorth = new JPanel();
         pnlCenter = new JPanel();
 
-        lblAccount = new JLabel("Account", SwingConstants.CENTER);
-        feedbackBtn = new JButton("Feedback");
+        lblAccount = new JLabel("Account Overview", SwingConstants.CENTER);
+
         feedbackBtn.addActionListener(this);
         topMenuBtn.addActionListener(this);
-        checkOutBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
         paymentsBtn.addActionListener(this);
 
-        // Set up the JTable with account information
-        setUpAccountTable();
-
+        // Set up the main GUI
         setGui();
-    }
-
-    private void setUpAccountTable() {
-        // Retrieve rented books from the database for the user
-        List<Object[]> rentedBooks = bookDAO.getRentedBooks(userId);
-
-        String[] columnNames = {"Book ID", "Title", "Author", "Return Date"};
-        Object[][] data = new Object[rentedBooks.size()][4];
-
-        // Populate the table with dynamic data from the database
-        for (int i = 0; i < rentedBooks.size(); i++) {
-            data[i][0] = rentedBooks.get(i)[0];  // Book ID
-            data[i][1] = rentedBooks.get(i)[1];  // Title
-            data[i][2] = rentedBooks.get(i)[2];  // Author
-            data[i][3] = rentedBooks.get(i)[3];  // Return Date
-        }
-
-        accountTable = new JTable(data, columnNames);
-        scrollPane = new JScrollPane(accountTable);
     }
 
     private void setGui() {
@@ -120,12 +93,24 @@ public class AccountPageGui extends JFrame implements ActionListener {
         pnlNorth.add(lblFees);  // Add the fees label to the north panel
         pnlNorth.setOpaque(false);
 
-        pnlCenter.setLayout(new BorderLayout());
-        pnlCenter.add(scrollPane, BorderLayout.CENTER); // Add the JTable inside the JScrollPane to the center panel
+        // Create a panel for the rented books section
+        pnlCenter.setLayout(new GridLayout(0, 1));  // Adjust layout as needed
+        List<Object[]> rentedBooks = bookDAO.getRentedBooks(userId);
+        if (rentedBooks.isEmpty()) {
+            JLabel noBooksLabel = new JLabel("No books currently rented.", SwingConstants.CENTER);
+            pnlCenter.add(noBooksLabel);
+        } else {
+            for (Object[] book : rentedBooks) {
+                JPanel bookPanel = new JPanel(new GridLayout(1, 2));
+                bookPanel.add(new JLabel("Title: " + book[1]));
+                bookPanel.add(new JLabel("Return Date: " + book[3]));
+                pnlCenter.add(bookPanel);
+            }
+        }
 
         pnlSouth.setLayout(new GridLayout(1, 4));  // Adjust column count if needed
         pnlSouth.add(topMenuBtn);
-        pnlSouth.add(checkOutBtn);
+        pnlSouth.add(feedbackBtn);
         pnlSouth.add(logOutBtn);
         pnlSouth.add(paymentsBtn);
         pnlSouth.setOpaque(false);
@@ -143,8 +128,8 @@ public class AccountPageGui extends JFrame implements ActionListener {
         if (e.getSource() == logOutBtn) {
             JOptionPane.showMessageDialog(this, "Logged out");
             dispose();
-        } else if (e.getSource() == checkOutBtn) {
-            JOptionPane.showMessageDialog(this, "Checked out successfully");
+        } else if (e.getSource() == feedbackBtn) {
+            JOptionPane.showMessageDialog(this, "Feedback page");
             new FeedbackPage();
             dispose();
         } else if (e.getSource() == topMenuBtn) {
@@ -169,8 +154,6 @@ public class AccountPageGui extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "You have no outstanding fines.");
             }
-        } else if (e.getActionCommand().equals("Feedback")) {
-            // Implement feedback logic
         }
     }
 

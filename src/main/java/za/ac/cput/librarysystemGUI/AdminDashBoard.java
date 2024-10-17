@@ -10,6 +10,8 @@ import za.ac.cput.librarysystemGui.LoginPage;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 import javax.swing.table.DefaultTableModel;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import za.ac.cput.librarysystemGui.FeedbackPage;
 
 public class AdminDashBoard extends JFrame {
 
@@ -36,6 +39,7 @@ public class AdminDashBoard extends JFrame {
     public AdminDashBoard() {
         userDAO = new UserDAO();  // Initialize UserDAO
         bookDAO = new BookDAO();  // Initialize BookDAO
+        createMenuBar();
 
         setTitle("Admin Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,9 +84,9 @@ public class AdminDashBoard extends JFrame {
         usersPanel.setLayout(new BorderLayout());
         usersPanel.setBorder(BorderFactory.createTitledBorder("Users"));
         
-        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
-        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
-        add(tabbedPane, BorderLayout.CENTER);
+//        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
+//        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
+//        add(tabbedPane, BorderLayout.CENTER);
 
         // Table for Users
         String[] userColumnNames = {"User ID", "Username", "Email", "Role"};
@@ -144,6 +148,44 @@ public class AdminDashBoard extends JFrame {
             dispose();  // Close the current Admin Dashboard window
             new LoginPage().setVisible(true);  // Open the login page
         });
+    }
+       private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // Exit the application
+            }
+        });
+        fileMenu.add(exitItem);
+        
+        // Add Feedback option to the file menu
+        JMenuItem feedbackItem = new JMenuItem("Feedback");
+        feedbackItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FeedbackPage(); // Open the feedback page
+            }
+        });
+        fileMenu.add(feedbackItem); // Add the feedback item to the file menu
+
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AboutPage(); // Open the feedback page
+            }
+        });
+        helpMenu.add(aboutItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+
+        setJMenuBar(menuBar);
     }
 
     private void setTableColumnWidths(JTable table) {
@@ -299,8 +341,8 @@ public class AdminDashBoard extends JFrame {
             String imagePath = imageField.getText(); // Get the image path
 
             // Validation checks
-            if (title.isEmpty() || author.isEmpty() || genre.isEmpty() || isbn.isEmpty() || yearPublishedStr.isEmpty() || imagePath.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "All fields must be filled.");
+            if (title.isEmpty() || author.isEmpty() || genre.isEmpty() || isbn.isEmpty() || yearPublishedStr.isEmpty() ) {
+                JOptionPane.showMessageDialog(this, "All fields must be filled. Except for images");
                 return;
             }
 
