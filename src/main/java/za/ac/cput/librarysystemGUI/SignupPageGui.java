@@ -1,18 +1,8 @@
 package za.ac.cput.librarysystemGui;
 
 import ac.za.cput.librarysystem.dao.UserDAO;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -20,17 +10,17 @@ import javax.swing.*;
  * @author oratile
  */
 public class SignupPageGui extends JFrame {
-    JPanel mainPnl, westPnl, eastPnl, centerPnl, southPnl, backgroundPnl;
-    JLabel titleLbl, usernameLbl, emailLbl, phoneLbl, passwordLbl, roleLbl, loginLinkLbl;
-    JTextField usernameField, emailField, phoneField;
-    JPasswordField passwordField;
-    JComboBox<String> roleComboBox;  // Add this for roles
-    JButton signUpButton;
-    
+    private JPanel mainPnl, centerPnl, southPnl, backgroundPnl;
+    private JLabel titleLbl, usernameLbl, emailLbl, phoneLbl, passwordLbl, roleLbl, loginLinkLbl;
+    private JTextField usernameField, emailField, phoneField;
+    private JPasswordField passwordField;
+    private JComboBox<String> roleComboBox;  // Add this for roles
+    private JButton signUpButton;
+
     public SignupPageGui() {
         setTitle("Library Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500, 450);  
+        setSize(500, 500);
         setResizable(true);
         
         guiSetUp();
@@ -40,69 +30,98 @@ public class SignupPageGui extends JFrame {
         
         setContentPane(backgroundPnl);
     }
-    
-    private void guiSetUp() {    
+
+    private void guiSetUp() {
         mainPnl = new JPanel(new BorderLayout());
-        westPnl = new JPanel(new GridLayout(5, 1, 10, 10));  
-        eastPnl = new JPanel(new GridLayout(5, 1, 10, 10));  
-        centerPnl = new JPanel(new GridLayout(1, 2, 10, 10));
-        southPnl = new JPanel(new GridLayout(2, 1, 10, 10));
-        
+        centerPnl = new JPanel(new GridBagLayout());
+        southPnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
         backgroundPnl = new JPanel();
-        
+
         titleLbl = new JLabel("Sign-up", SwingConstants.CENTER);
-        usernameLbl = new JLabel("Username:", SwingConstants.CENTER);
-        emailLbl = new JLabel("Email:", SwingConstants.CENTER);
-        phoneLbl = new JLabel("Phone:", SwingConstants.CENTER);
-        passwordLbl = new JLabel("Password", SwingConstants.CENTER);
-        roleLbl = new JLabel("Role:", SwingConstants.CENTER);  
-        
+        titleLbl.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLbl.setForeground(new Color(50, 150, 250));
+
+        usernameLbl = new JLabel("Username:");
+        emailLbl = new JLabel("Email:");
+        phoneLbl = new JLabel("Phone:");
+        passwordLbl = new JLabel("Password:");
+        roleLbl = new JLabel("Role:");
+
         usernameField = new JTextField(15);
         emailField = new JTextField(15);
         phoneField = new JTextField(15);
         passwordField = new JPasswordField(15);
         
-        
         String[] roles = {"Member", "Admin"};
         roleComboBox = new JComboBox<>(roles);
-        
+
         signUpButton = new JButton("Sign-Up");
-        
+        signUpButton.setBackground(new Color(50, 150, 250));
+        signUpButton.setForeground(Color.WHITE);
+        signUpButton.setFocusPainted(false);
+        signUpButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        signUpButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         // Initialize login link label
         loginLinkLbl = new JLabel("<html>Already a member? <a href='#'>Login here</a></html>", SwingConstants.CENTER);
         loginLinkLbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        loginLinkLbl.setForeground(Color.BLUE); // Optional: Set link color
+        loginLinkLbl.setForeground(new Color(50, 150, 250)); // Optional: Set link color
     }
-    
+
     private void guiLayout() {
-        titleLbl.setFont(new Font("Arial", Font.BOLD, 24));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Padding around components
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Title
         mainPnl.add(titleLbl, BorderLayout.NORTH);
         
-        westPnl.add(usernameLbl);
-        westPnl.add(emailLbl);
-        westPnl.add(phoneLbl);
-        westPnl.add(passwordLbl);
-        westPnl.add(roleLbl);  
+        // Center panel layout
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        centerPnl.add(usernameLbl, gbc);
         
-        eastPnl.add(usernameField);
-        eastPnl.add(emailField);
-        eastPnl.add(phoneField);
-        eastPnl.add(passwordField);
-        eastPnl.add(roleComboBox);  
+        gbc.gridx = 1;
+        centerPnl.add(usernameField, gbc);
         
-        centerPnl.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        centerPnl.add(westPnl);
-        centerPnl.add(eastPnl);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        centerPnl.add(emailLbl, gbc);
+        
+        gbc.gridx = 1;
+        centerPnl.add(emailField, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        centerPnl.add(phoneLbl, gbc);
+        
+        gbc.gridx = 1;
+        centerPnl.add(phoneField, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        centerPnl.add(passwordLbl, gbc);
+        
+        gbc.gridx = 1;
+        centerPnl.add(passwordField, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        centerPnl.add(roleLbl, gbc);
+        
+        gbc.gridx = 1;
+        centerPnl.add(roleComboBox, gbc);
         
         mainPnl.add(centerPnl, BorderLayout.CENTER);
         
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(signUpButton);
-        southPnl.add(buttonPanel);
+        // South panel layout
+        southPnl.add(signUpButton);
         southPnl.add(loginLinkLbl); 
         mainPnl.add(southPnl, BorderLayout.SOUTH);
     }
-    
+
     private void guiBackground() {
         backgroundPnl = new JPanel() {
             @Override
@@ -120,7 +139,7 @@ public class SignupPageGui extends JFrame {
         backgroundPnl.add(mainPnl, BorderLayout.CENTER);
         setContentPane(backgroundPnl);
     }
-    
+
     private void guiAddListeners() {
         signUpButton.addActionListener(new ActionListener() {
             @Override
@@ -137,7 +156,7 @@ public class SignupPageGui extends JFrame {
             }
         });
     }
-    
+
     private void processSignUp() {
         try {
             String username = usernameField.getText();
@@ -164,7 +183,7 @@ public class SignupPageGui extends JFrame {
             JOptionPane.showMessageDialog(this, "An unexpected error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void clearFields() {
         usernameField.setText("");
         emailField.setText("");
@@ -172,6 +191,8 @@ public class SignupPageGui extends JFrame {
         passwordField.setText("");
         roleComboBox.setSelectedIndex(0);  // Reset role selection
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new SignupPageGui().setVisible(true));
+    }
 }
-
-

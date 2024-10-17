@@ -11,12 +11,13 @@ import java.time.format.DateTimeFormatter;
 public class FeedbackPage extends JFrame {
 
     private JTextField nameField, surnameField;
-    private JButton submitBtn, returnToMenuBtn, btnLogout; // Button to return to the top menu
+    private JButton submitBtn, returnToMenuBtn, btnLogout;
 
     public FeedbackPage() {
         super("Feedback");
         setSize(400, 400);
         setLayout(new BorderLayout());
+        setResizable(false); // Prevent resizing for a more controlled layout
 
         // Creating text fields for name and surname
         JPanel userInfoPanel = new JPanel(new GridLayout(2, 2));
@@ -35,6 +36,8 @@ public class FeedbackPage extends JFrame {
 
         // Submit button
         submitBtn = new JButton("Submit");
+        submitBtn.setBackground(new Color(76, 175, 80)); // Green background
+        submitBtn.setForeground(Color.WHITE); // White text
         submitBtn.addActionListener(e -> {
             String name = nameField.getText();
             String surname = surnameField.getText();
@@ -50,20 +53,17 @@ public class FeedbackPage extends JFrame {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields.");
             }
         });
-        
-         // Add Logout Button to the Top
+
+        // Logout button
         btnLogout = new JButton("Logout");
-       // JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
-        //add(logoutPanel, BorderLayout.NORTH);  // Adding the logout button panel to the north of the frame
-        
-        // Logout Button Action Listener
+        btnLogout.setBackground(Color.RED); // Red background for emphasis
+        btnLogout.setForeground(Color.WHITE); // White text
         btnLogout.addActionListener(e -> {
-            dispose();  // Close the current Admin Dashboard window
-            //new LoginPage().setVisible(true);  // Open the login page
+            dispose(); // Close the current window
+            // new LoginPage().setVisible(true); // Open the login page
         });
 
-        // Return to TopMenu button
+        // Return to Top Menu button
         returnToMenuBtn = new JButton("Top Menu");
         returnToMenuBtn.addActionListener(e -> {
             new TopMenu(); // Assuming TopMenu is another JFrame
@@ -73,6 +73,7 @@ public class FeedbackPage extends JFrame {
         // Main panel to hold all sections
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding around the panel
 
         // Create a panel to hold user info and feedback section
         JPanel feedbackPanel = new JPanel();
@@ -84,7 +85,7 @@ public class FeedbackPage extends JFrame {
         // Adding components to the main panel
         mainPanel.add(feedbackPanel, BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(1, 2)); // Two buttons side by side
+        buttonPanel.setLayout(new GridLayout(1, 3)); // Three buttons in a row
         buttonPanel.add(submitBtn);
         buttonPanel.add(returnToMenuBtn);
         buttonPanel.add(btnLogout);
@@ -92,7 +93,6 @@ public class FeedbackPage extends JFrame {
 
         // Adding main panel to the frame
         add(mainPanel);
-
         setLocationRelativeTo(null); // Center the frame
         setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -119,5 +119,4 @@ public class FeedbackPage extends JFrame {
             JOptionPane.showMessageDialog(this, "Error saving your feedback, kindly try again :)");
         }
     }
-
 }

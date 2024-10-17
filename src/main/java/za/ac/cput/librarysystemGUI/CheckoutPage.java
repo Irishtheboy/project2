@@ -1,5 +1,6 @@
 package za.ac.cput.librarysystemGui;
 
+import ac.za.cput.librarysystem.domain.UserSession;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,8 +17,6 @@ public class CheckoutPage extends JFrame implements ActionListener {
     JLabel lblCheckOut, lblBookTitle, lblDueDate, lblMemberId;
     JTextField txtBookTitle, txtDueDate, txtMemberId;
     JLabel background;
-    
-    
 
     public CheckoutPage() {
         super("Library System - Check Out");
@@ -109,18 +108,17 @@ public class CheckoutPage extends JFrame implements ActionListener {
         } else if (e.getSource() == confirmBtn) {
             if (txtBookTitle.getText().isEmpty() || txtDueDate.getText().isEmpty() || txtMemberId.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please fill in all fields");
-            
+
             } else {
                 JOptionPane.showMessageDialog(this, "Book checked out successfully");
                 new SubmitFrameGui().setVisible(true);
             }
         } else if (e.getSource() == accountBtn) {
-            JOptionPane.showMessageDialog(this, "Returning to previous menu");
-            new AccountPageGui();
+            int userId = UserSession.getLoggedInUserId();
+            String username = UserSession.getLoggedInUsername();
+            new AccountPageGui(userId, username);  // Pass the user ID and username
             dispose();
         }
     }
-    
-    
 
 }

@@ -1,29 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package za.ac.cput.librarysystemGUI;
-
 
 import za.ac.cput.librarysystemGui.TopMenu;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-/**
- *
- * @author Franco
- */
-
-    
-
-
-
-
 
 public class AboutPage extends JFrame implements ActionListener {
 
-    private JButton backButton; 
+    private JButton backButton;
     private TopMenu topMenu; // Store the reference to TopMenu
 
     // Constructor with TopMenu as argument
@@ -33,16 +18,20 @@ public class AboutPage extends JFrame implements ActionListener {
 
         // Set layout
         setLayout(new BorderLayout());
+        setResizable(false); // Prevent resizing for a more controlled layout
 
         // Purpose Section
         JPanel pnlPurpose = new JPanel();
         pnlPurpose.setLayout(new GridLayout(2, 1));
         JLabel lblPurposeTitle = new JLabel("Purpose of the Library System", JLabel.CENTER);
+        lblPurposeTitle.setFont(new Font("Arial", Font.BOLD, 16)); // Bold font for title
         JTextArea txtPurpose = new JTextArea(
             "The library system aims to streamline book management and user account services, allowing " +
             "efficient check-out, return, and payment of overdue fines for a better library experience."
         );
         txtPurpose.setEditable(false);
+        txtPurpose.setLineWrap(true);
+        txtPurpose.setWrapStyleWord(true);
         txtPurpose.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
        
         pnlPurpose.add(lblPurposeTitle);
@@ -52,6 +41,7 @@ public class AboutPage extends JFrame implements ActionListener {
         JPanel pnlFAQs = new JPanel();
         pnlFAQs.setLayout(new BorderLayout());
         JLabel lblFAQsTitle = new JLabel("Frequently Asked Questions (FAQs)", JLabel.CENTER);
+        lblFAQsTitle.setFont(new Font("Arial", Font.BOLD, 16)); // Bold font for title
         lblFAQsTitle.setVerticalAlignment(JLabel.TOP);
         lblFAQsTitle.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
@@ -64,6 +54,8 @@ public class AboutPage extends JFrame implements ActionListener {
             + "A3: Use the search feature in the main menu to find available books."
         );
         txtFAQs.setEditable(false);
+        txtFAQs.setLineWrap(true);
+        txtFAQs.setWrapStyleWord(true);
         txtFAQs.setPreferredSize(new Dimension(450, 250)); // Adjust height for more content
         txtFAQs.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
 
@@ -74,17 +66,22 @@ public class AboutPage extends JFrame implements ActionListener {
         JPanel pnlContact = new JPanel();
         pnlContact.setLayout(new GridLayout(2, 1));
         JLabel lblContactTitle = new JLabel("Emergency Contact Information", JLabel.CENTER);
+        lblContactTitle.setFont(new Font("Arial", Font.BOLD, 16)); // Bold font for title
         JTextArea txtContact = new JTextArea(
             "Phone: +1 800 555 1234\n"
             + "Email: support@librarysystem.com"
         );
         txtContact.setEditable(false);
+        txtContact.setLineWrap(true);
+        txtContact.setWrapStyleWord(true);
         txtContact.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
         pnlContact.add(lblContactTitle);
         pnlContact.add(txtContact);
 
         // Back Button to go back to TopMenu
         backButton = new JButton("Back to Menu");
+        backButton.setBackground(new Color(76, 175, 80)); // Green background
+        backButton.setForeground(Color.WHITE); // White text
         backButton.addActionListener(this); // Add action listener to the button
 
         // Add panels to frame
@@ -120,5 +117,4 @@ public class AboutPage extends JFrame implements ActionListener {
             dispose(); // Close AboutPage
         }
     }
-
 }

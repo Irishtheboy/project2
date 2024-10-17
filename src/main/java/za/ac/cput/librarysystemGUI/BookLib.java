@@ -1,4 +1,4 @@
-package za.ac.cput.librarysystemGui;
+package za.ac.cput.librarysystemGUI;
 
 import ac.za.cput.librarysystem.dao.BookDAO;
 import ac.za.cput.librarysystem.domain.UserSession;
@@ -11,7 +11,6 @@ import java.util.List;
 import za.ac.cput.librarysystemGui.AccountPageGui;
 import za.ac.cput.librarysystemGui.CheckoutPage;
 import za.ac.cput.librarysystemGui.TopMenu;
-import za.ac.cput.librarysystemGui.AccountPageGui;
 
 public class BookLib extends JFrame implements ActionListener {
 
@@ -22,39 +21,46 @@ public class BookLib extends JFrame implements ActionListener {
     private DefaultTableModel model;
     private JTable bookTable;
     private DefaultTableModel rentedBooksModel;
-    private JTable rentedBooksTable;
+    private JTable rentedBooksTable; // New JTable for rented books
+    private JButton rentButton;
+    private JButton returnButton, searchButton; // Declare returnButton
     private JTextField searchField;
-    private JButton searchButton;
-    private String adminPassword = "admin123"; // Admin password for approval
+    private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
+    private JTable borrowHistoryTable; // JTable for borrow history
+    
+        private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 16);
+    private static final Color BUTTON_COLOR = Color.BLUE;
+    private static final Color BUTTON_HOVER_COLOR = Color.DARK_GRAY;
+    private static final Color TABLE_BACKGROUND_COLOR = Color.WHITE;
+    private static final Color TABLE_SELECTION_BACKGROUND = Color.LIGHT_GRAY;
 
     public BookLib() {
-        bookDAO = new BookDAO();
+                bookDAO = new BookDAO();
 
-        setTitle("Book Library");
+        setTitle("Audio Book Library");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(880, 600);
+        setLocationRelativeTo(null); // Center the window on the screen
 
         createMenuBar();
+
         JTabbedPane tabbedPane = new JTabbedPane();
         JPanel tableBookPanel = createTableBookPanel();
         tabbedPane.addTab("Books", tableBookPanel);
 
-        JPanel rentedBooksPanel = createRentedBooksPanel();
-        tabbedPane.addTab("My Rented Books", rentedBooksPanel);
-
-        JPanel borrowHistoryPanel = createBorrowHistoryPanel();
-        tabbedPane.addTab("Borrow History", borrowHistoryPanel);
+        JPanel rentedBooksPanel = createRentedBooksPanel(); // Create new panel for rented books
+        tabbedPane.addTab("My Rented Books", rentedBooksPanel); // Add tab for rented books
 
         add(tabbedPane, BorderLayout.CENTER);
 
         JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         loggedInUserLabel = new JLabel("Logged in as: " + UserSession.getLoggedInUsername());
-        loggedInUserLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        loggedInUserLabel.setFont(DEFAULT_FONT);
         userPanel.add(loggedInUserLabel);
 
         JPanel rentalPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rentalCountLabel = new JLabel("Books rented: " + rentalCount);
-        rentalCountLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        rentalCountLabel.setFont(DEFAULT_FONT);
         rentalPanel.add(rentalCountLabel);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -67,9 +73,17 @@ public class BookLib extends JFrame implements ActionListener {
         checkoutbtn = new JButton("Check out");
         topMenubtn = new JButton("Top Menu");
 
+        // Set button colors and hover effects
+        styleButton(accountbtn);
+        styleButton(checkoutbtn);
+        styleButton(topMenubtn);
+
         bottomPanel.add(accountbtn);
         bottomPanel.add(checkoutbtn);
         bottomPanel.add(topMenubtn);
+        
+        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
+        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
 
         accountbtn.addActionListener(this);
         checkoutbtn.addActionListener(this);
@@ -90,8 +104,33 @@ public class BookLib extends JFrame implements ActionListener {
         setJMenuBar(menuBar);
     }
 
+    private JPanel createBorrowHistoryPanel() {
+        JPanel historyPanel = new JPanel(new BorderLayout());
+        historyPanel.setBackground(Color.LIGHT_GRAY); // Set background color for the panel
+
+        // Column Names for Borrow History Table
+        String[] historyColumnNames = {"Book ID", "Title", "Author", "Borrow Date", "Return Date"};
+        borrowHistoryModel = new DefaultTableModel(historyColumnNames, 0);
+
+        // Fetch borrow history data from the database and populate the table
+        List<Object[]> borrowHistory = bookDAO.getBorrowHistory(UserSession.getLoggedInUserId());
+        for (Object[] historyEntry : borrowHistory) {
+            borrowHistoryModel.addRow(historyEntry);
+        }
+
+        borrowHistoryTable = new JTable(borrowHistoryModel);
+        JScrollPane scrollPane = new JScrollPane(borrowHistoryTable);
+        historyPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return historyPanel;
+    }
+
+    // Create Table Panel for Books
     private JPanel createTableBookPanel() {
         JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.setBackground(Color.LIGHT_GRAY); // Set background color for the panel
+
+        // Column Names for the Book Table
         String[] columnNames = {"Book ID", "Title", "Author", "Available"};
         model = new DefaultTableModel(columnNames, 0);
 
@@ -102,31 +141,56 @@ public class BookLib extends JFrame implements ActionListener {
         }
 
         bookTable = new JTable(model);
+        bookTable.setBackground(TABLE_BACKGROUND_COLOR);
+        bookTable.setSelectionBackground(TABLE_SELECTION_BACKGROUND);
         JScrollPane scrollPane = new JScrollPane(bookTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         // Rent Button
-        JButton rentButton = new JButton("Rent Selected Book");
+        rentButton = new JButton("Rent Selected Book");
         rentButton.addActionListener(e -> rentSelectedBook());
         tablePanel.add(rentButton, BorderLayout.SOUTH);
 
         // Search Panel
         JPanel searchPanel = new JPanel(new FlowLayout());
-        searchField = new JTextField(20);
-        searchButton = new JButton("Search");
-        searchPanel.add(new JLabel("Search Book:"));
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
+        searchField = new JTextField(20); // Text field for search input
+        searchButton = new JButton("Search"); // Button to initiate search
+        searchPanel.add(new JLabel("Search Book:")); // Label for search
+        searchPanel.add(searchField); // Add text field to panel
+        searchPanel.add(searchButton); // Add search button to panel
 
-        searchButton.addActionListener(e -> searchBooks());
+        searchButton.addActionListener(e -> searchBooks()); // Add action listener to search button
 
-        tablePanel.add(searchPanel, BorderLayout.NORTH);
+        tablePanel.add(searchPanel, BorderLayout.NORTH); // Add search panel to the top of the table panel
 
         return tablePanel;
     }
 
+    // Search for books based on the title or author
+    private void searchBooks() {
+        String query = searchField.getText().trim().toLowerCase(); // Get search input and convert to lowercase
+        if (query.isEmpty()) {
+            refreshAvailableBooksTable(); // Show all books if search field is empty
+            return;
+        }
+
+        model.setRowCount(0); // Clear existing rows
+        List<Object[]> books = bookDAO.getAllBooks(); // Fetch all books from database
+        for (Object[] book : books) {
+            String title = book[1].toString().toLowerCase(); // Book title
+            String author = book[2].toString().toLowerCase(); // Book author
+            if (title.contains(query) || author.contains(query)) {
+                model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"}); // Add filtered results to table
+            }
+        }
+    }
+
+    // Create Table Panel for Rented Books
     private JPanel createRentedBooksPanel() {
         JPanel rentedPanel = new JPanel(new BorderLayout());
+        rentedPanel.setBackground(Color.LIGHT_GRAY); // Set background color for the panel
+
+        // Column Names for Rented Books Table
         String[] rentedColumnNames = {"Book ID", "Title", "Author", "Return Date"};
         rentedBooksModel = new DefaultTableModel(rentedColumnNames, 0);
 
@@ -137,129 +201,112 @@ public class BookLib extends JFrame implements ActionListener {
         }
 
         rentedBooksTable = new JTable(rentedBooksModel);
+        rentedBooksTable.setBackground(TABLE_BACKGROUND_COLOR);
+        rentedBooksTable.setSelectionBackground(TABLE_SELECTION_BACKGROUND);
         JScrollPane scrollPane = new JScrollPane(rentedBooksTable);
         rentedPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Return Button
-        JButton returnButton = new JButton("Return Selected Book");
+        returnButton = new JButton("Return Selected Book");
         returnButton.addActionListener(e -> returnSelectedBook());
         rentedPanel.add(returnButton, BorderLayout.SOUTH);
 
         return rentedPanel;
     }
 
-    private JPanel createBorrowHistoryPanel() {
-        JPanel historyPanel = new JPanel(new BorderLayout());
-        String[] historyColumnNames = {"Book ID", "Title", "Author", "Borrow Date", "Return Date"};
-        DefaultTableModel borrowHistoryModel = new DefaultTableModel(historyColumnNames, 0);
-        
-        // Fetch borrow history data from the database and populate the table
-        List<Object[]> borrowHistory = bookDAO.getBorrowHistory(UserSession.getLoggedInUserId());
-        for (Object[] historyEntry : borrowHistory) {
-            borrowHistoryModel.addRow(historyEntry);
-        }
+    // Rent a selected book
+    private void rentSelectedBook() {
+        int selectedRow = bookTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int bookId = (int) bookTable.getValueAt(selectedRow, 0);
+            boolean isAvailable = "Yes".equals(bookTable.getValueAt(selectedRow, 3));
 
-        JTable borrowHistoryTable = new JTable(borrowHistoryModel);
-        JScrollPane scrollPane = new JScrollPane(borrowHistoryTable);
-        historyPanel.add(scrollPane, BorderLayout.CENTER);
-
-        return historyPanel;
-    }
-
-    private void searchBooks() {
-        String query = searchField.getText().trim().toLowerCase();
-        if (query.isEmpty()) {
-            refreshAvailableBooksTable();
-            return;
-        }
-
-        model.setRowCount(0);
-        List<Object[]> books = bookDAO.getAllBooks();
-        for (Object[] book : books) {
-            String title = book[1].toString().toLowerCase();
-            String author = book[2].toString().toLowerCase();
-            if (title.contains(query) || author.contains(query)) {
-                model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"});
-            }
-        }
-    }
-
- private void rentSelectedBook() {
-    int selectedRow = bookTable.getSelectedRow();
-    if (selectedRow >= 0) {
-        int bookId = (int) bookTable.getValueAt(selectedRow, 0);
-        boolean isAvailable = "Yes".equals(bookTable.getValueAt(selectedRow, 3));
-
-        if (isAvailable) {
-            JPasswordField passwordField = new JPasswordField();
-            Object[] message = {"Admin Password:", passwordField};
-
-            int option = JOptionPane.showConfirmDialog(null, message, "Admin Approval", JOptionPane.OK_CANCEL_OPTION);
-
-            if (option == JOptionPane.OK_OPTION) {
-                String enteredPassword = new String(passwordField.getPassword());
-
-                if (enteredPassword.equals(adminPassword)) {
-                    boolean success = bookDAO.rentBook(UserSession.getLoggedInUserId(), bookId);
-                    if (success) {
-                        JOptionPane.showMessageDialog(this, "Book rented successfully!");
+            if (isAvailable) {
+                // Prompt for admin password before renting
+                JPasswordField passwordField = new JPasswordField();
+                int result = JOptionPane.showConfirmDialog(this, passwordField, "Enter Admin Password", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    String password = new String(passwordField.getPassword());
+                    if (isValidAdminPassword(password)) {
+                        bookDAO.rentBook(bookId, UserSession.getLoggedInUserId());
                         rentalCount++;
                         rentalCountLabel.setText("Books rented: " + rentalCount);
-                        model.setValueAt("No", selectedRow, 3); // Update availability in book table
-                        updateRentedBooksTable(); // Call to update the rented books table
+                        refreshAvailableBooksTable();
+                        refreshRentedBooksTable(); // Refresh rented books table
                     } else {
-                        JOptionPane.showMessageDialog(this, "Failed to rent the book.");
+                        JOptionPane.showMessageDialog(this, "Invalid password!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Incorrect admin password. Rental denied.");
                 }
+            } else {
+                JOptionPane.showMessageDialog(this, "This book is not available for rent.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "This book is already rented out.");
+            JOptionPane.showMessageDialog(this, "Please select a book to rent.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
-    } else {
-        JOptionPane.showMessageDialog(this, "Please select a book to rent.");
     }
-}
 
-private void updateRentedBooksTable() {
-    rentedBooksModel.setRowCount(0); // Clear existing rows
-
-    // Fetch updated rented books from the database
-    List<Object[]> rentedBooks = bookDAO.getRentedBooks(UserSession.getLoggedInUserId());
-    for (Object[] rentedBook : rentedBooks) {
-        rentedBooksModel.addRow(rentedBook); // Add each rented book to the model
-    }
-}
-
-
+    // Return a selected book
     private void returnSelectedBook() {
         int selectedRow = rentedBooksTable.getSelectedRow();
         if (selectedRow >= 0) {
             int bookId = (int) rentedBooksTable.getValueAt(selectedRow, 0);
-            boolean success = bookDAO.returnBook(UserSession.getLoggedInUserId(), bookId);
-            if (success) {
-                JOptionPane.showMessageDialog(this, "Book returned successfully!");
-                rentedBooksModel.removeRow(selectedRow);
-                rentalCount--;
-                rentalCountLabel.setText("Books rented: " + rentalCount);
-                refreshAvailableBooksTable();
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to return the book.");
-            }
+            bookDAO.returnBook(bookId, UserSession.getLoggedInUserId());
+            rentalCount--;
+            rentalCountLabel.setText("Books rented: " + rentalCount);
+            refreshRentedBooksTable(); // Refresh rented books table
+            refreshAvailableBooksTable(); // Refresh available books table
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a rented book to return.", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    
-
-    private void refreshAvailableBooksTable() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Validate admin password
+    private boolean isValidAdminPassword(String password) {
+        // Implement your password validation logic here
+        return "admin123".equals(password);
     }
-    
-     @Override
+
+    // Refresh available books table
+    private void refreshAvailableBooksTable() {
+        model.setRowCount(0); // Clear existing rows
+        List<Object[]> books = bookDAO.getAllBooks(); // Fetch all books from database
+        for (Object[] book : books) {
+            model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"}); // Add refreshed books to table
+        }
+    }
+
+    // Refresh rented books table
+    private void refreshRentedBooksTable() {
+        rentedBooksModel.setRowCount(0); // Clear existing rows
+        List<Object[]> rentedBooks = bookDAO.getRentedBooks(UserSession.getLoggedInUserId()); // Fetch rented books from database
+        for (Object[] rentedBook : rentedBooks) {
+            rentedBooksModel.addRow(rentedBook); // Add refreshed rented books to table
+        }
+    }
+
+    // Style buttons
+    private void styleButton(JButton button) {
+        button.setBackground(BUTTON_COLOR);
+        button.setForeground(Color.WHITE);
+        button.setBorderPainted(false); // Remove default border
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(BUTTON_HOVER_COLOR);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(BUTTON_COLOR);
+            }
+        });
+    }
+
+    // Action listener for button clicks
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == accountbtn) {
-            new AccountPageGui();
+            int userId = UserSession.getLoggedInUserId();
+            String username = UserSession.getLoggedInUsername();
+            new AccountPageGui(userId, username);  // Pass the user ID and username
             dispose();
         } else if (e.getSource() == checkoutbtn) {
             JOptionPane.showMessageDialog(null, "Checked out successfully");
@@ -271,177 +318,7 @@ private void updateRentedBooksTable() {
         }
     }
 
-  
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(BookLib::new); // Launch the application
+    }
 }
-
-
-
-//import ac.za.cput.librarysystem.dao.BookDAO;
-//import javax.swing.*;
-//import java.awt.*;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.util.List;
-//
-//public class BookLib extends JFrame implements ActionListener {
-//
-//    private JButton accountbtn, checkoutbtn, topMenubtn;
-//    private BookDAO bookDAO; // Assuming you have a BookDAO class to manage book data
-//    private List<Book> books; // List to hold the books retrieved from the database
-//    private String adminPassword = "admin123"; // Admin password for approval
-//
-//    public BookLib() {
-//        bookDAO = new BookDAO(); // Initialize your BookDAO
-////        books = bookDAO.getAllBookss(); // Retrieve all books from the database
-//
-//        setTitle("Book Library");
-//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        setSize(880, 600);
-//
-//        createMenuBar();
-//
-//        JLabel title = new JLabel("BOOKS", SwingConstants.CENTER);
-//        title.setFont(new Font("Arial", Font.BOLD, 24));
-//        add(title, BorderLayout.NORTH);
-//
-//        JPanel bookPanel = createBookPanel();
-//        add(bookPanel, BorderLayout.CENTER);
-//
-//        JPanel bottomPanel = new JPanel(new FlowLayout());
-//        accountbtn = new JButton("Account");
-//        checkoutbtn = new JButton("Check out");
-//        topMenubtn = new JButton("Top Menu");
-//
-//        bottomPanel.add(accountbtn);
-//        bottomPanel.add(checkoutbtn);
-//        bottomPanel.add(topMenubtn);
-//
-//        accountbtn.addActionListener(this);
-//        checkoutbtn.addActionListener(this);
-//        topMenubtn.addActionListener(this);
-//
-//        add(bottomPanel, BorderLayout.SOUTH);
-//
-//        setVisible(true);
-//    }
-//
-//    private void createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-//
-//        JMenu fileMenu = new JMenu("File");
-//        JMenuItem exitItem = new JMenuItem("Exit");
-//        exitItem.addActionListener(e -> System.exit(0));
-//        fileMenu.add(exitItem);
-//
-//        JMenu helpMenu = new JMenu("Help");
-//        JMenuItem aboutItem = new JMenuItem("About");
-//        helpMenu.add(aboutItem);
-//
-//        menuBar.add(fileMenu);
-//        menuBar.add(helpMenu);
-//
-//        setJMenuBar(menuBar);
-//    }
-//
-//    private JPanel createBookPanel() {
-//        JPanel bookPanel = new JPanel(new GridLayout(2, 4, 10, 10));
-//
-//        for (Book book : books) {
-//            JPanel bookPanelItem = new JPanel(new BorderLayout());
-//            JLabel bookPic = new JLabel(book.getImageIcon());
-//            bookPanelItem.add(bookPic, BorderLayout.CENTER);
-//
-//            JPanel textAndButtonPanel = new JPanel(new BorderLayout());
-//
-//            JLabel bookName = new JLabel(book.getName(), SwingConstants.CENTER);
-//            JLabel bookAuth = new JLabel(book.getAuthor(), SwingConstants.CENTER);
-//
-//            JButton trolleyBtn = new JButton("Add to cart", new ImageIcon("trolley.png"));
-//            trolleyBtn.setActionCommand(book.getName());
-//
-//            trolleyBtn.addActionListener(e -> {
-//                String bookNameClicked = e.getActionCommand();
-//                askAdminForPermission(bookNameClicked);
-//            });
-//
-//            JPanel namePanel = new JPanel(new BorderLayout());
-//            namePanel.add(bookName, BorderLayout.CENTER);
-//
-//            JPanel authorPanel = new JPanel(new BorderLayout());
-//            authorPanel.add(bookAuth, BorderLayout.CENTER);
-//
-//            JPanel buttonPanel = new JPanel(new BorderLayout());
-//            buttonPanel.add(trolleyBtn, BorderLayout.CENTER);
-//
-//            textAndButtonPanel.add(namePanel, BorderLayout.NORTH);
-//            textAndButtonPanel.add(authorPanel, BorderLayout.CENTER);
-//            textAndButtonPanel.add(buttonPanel, BorderLayout.SOUTH);
-//
-//            bookPanelItem.add(textAndButtonPanel, BorderLayout.SOUTH);
-//            bookPanel.add(bookPanelItem);
-//        }
-//
-//        return bookPanel;
-//    }
-//
-//    // Method to ask admin for permission to reserve the book
-//    private void askAdminForPermission(String bookNameClicked) {
-//        // Dialog to ask for admin password
-//        JPasswordField passwordField = new JPasswordField();
-//        Object[] message = {
-//            "Admin Password:", passwordField
-//        };
-//
-//        int option = JOptionPane.showConfirmDialog(null, message, "Admin Approval", JOptionPane.OK_CANCEL_OPTION);
-//
-//        if (option == JOptionPane.OK_OPTION) {
-//            String enteredPassword = new String(passwordField.getPassword());
-//            if (enteredPassword.equals(adminPassword)) {
-//                JOptionPane.showMessageDialog(this, "Book '" + bookNameClicked + "' has been reserved successfully.");
-//                // Code to reserve the book (e.g., update the database) can be added here
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Incorrect admin password. Reservation denied.");
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == accountbtn) {
-//            new AccountPageGui();
-//            dispose();
-//        } else if (e.getSource() == checkoutbtn) {
-//            JOptionPane.showMessageDialog(null, "Checked out successfully");
-//            new CheckoutPage();
-//            dispose();
-//        } else if (e.getSource() == topMenubtn) {
-//            JOptionPane.showMessageDialog(null, "Back to top menu");
-//            dispose();
-//        }
-//    }
-//
-//    // Book class remains unchanged; you might have a separate Book class
-//    private static class Book {
-//        private String name;
-//        private String author;
-//        private String imagePath;
-//
-//        public Book(String name, String author, String imagePath) {
-//            this.name = name;
-//            this.author = author;
-//            this.imagePath = imagePath;
-//        }
-//
-//        public String getName() {
-//            return name;
-//        }
-//
-//        public String getAuthor() {
-//            return author;
-//        }
-//
-//        public ImageIcon getImageIcon() {
-//            return new ImageIcon(imagePath);
-//        }
-//    }
-//}

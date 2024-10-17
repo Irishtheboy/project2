@@ -2,6 +2,7 @@ package za.ac.cput.librarysystemGui;
 
 import za.ac.cput.librarysystemGUI.AudioBook;
 import za.ac.cput.librarysystemGUI.AboutPage;
+import za.ac.cput.librarysystemGUI.BookLib;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -97,17 +98,23 @@ public class TopMenu extends JFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnBooks) {
-            JOptionPane.showMessageDialog(null, "Welcome to the books section");
-            new BookLib();
-            dispose();
-        } else if (e.getSource() == btnAudio) {
-            JOptionPane.showMessageDialog(null, "Welcome to the audio section");
-            new AudioBook();
-            dispose();
-        }
+public void actionPerformed(ActionEvent e) {
+    Object source = e.getSource(); // Get the source of the event
+
+    if (source == btnBooks) {
+        JOptionPane.showMessageDialog(this, "Welcome to the books section");
+        new BookLib(); // Open the BookLib window
+        dispose(); // Close the current window
+    } else if (source == btnAudio) {
+        JOptionPane.showMessageDialog(this, "Welcome to the audio section");
+        new AudioBook(); // Open the AudioBook window
+        dispose(); // Close the current window
+    } else {
+        // Optional: Handle other buttons or show an error message
+        JOptionPane.showMessageDialog(this, "Unknown action performed");
     }
+}
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(TopMenu::new);

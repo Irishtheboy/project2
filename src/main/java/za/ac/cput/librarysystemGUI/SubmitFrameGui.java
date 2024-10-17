@@ -1,5 +1,6 @@
 package za.ac.cput.librarysystemGui;
 
+import ac.za.cput.librarysystem.domain.UserSession;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -13,13 +14,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-
 public class SubmitFrameGui extends JFrame {
 
     public SubmitFrameGui() {
         initializeUI();
-        
-        
+
     }
 
     private void initializeUI() {
@@ -38,7 +37,6 @@ public class SubmitFrameGui extends JFrame {
         JLabel label2 = new JLabel("Make sure to pick up books at the library.", SwingConstants.CENTER);
         JLabel label3 = new JLabel("<html>Return the books within <font color='red'>30 days</font>.</html>", SwingConstants.CENTER); // Changes the color of "30 days" to red.
 
-        
         labelPanel.add(label1);
         labelPanel.add(label2);
         labelPanel.add(label3);
@@ -60,7 +58,6 @@ public class SubmitFrameGui extends JFrame {
 //
 //        logoutButton.setBackground(Color.CYAN);
 //        logoutButton.setForeground(Color.BLACK);
-
         buttonPanel.add(accountButton);
         buttonPanel.add(topMenuButton);
         buttonPanel.add(logoutButton);
@@ -68,8 +65,9 @@ public class SubmitFrameGui extends JFrame {
         accountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(SubmitFrameGui.this, "Account button has been clicked!");
-                new AccountPageGui();
+                int userId = UserSession.getLoggedInUserId();
+                String username = UserSession.getLoggedInUsername();
+                new AccountPageGui(userId, username);
                 dispose();
             }
         });
@@ -84,7 +82,7 @@ public class SubmitFrameGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(SubmitFrameGui.this, "Log Out button has been clicked!");
-                
+
                 dispose();
             }
         });
@@ -92,4 +90,3 @@ public class SubmitFrameGui extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 }
-
