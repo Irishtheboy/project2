@@ -1,7 +1,7 @@
-Thu Oct 17 18:59:15 SAST 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
+Fri Oct 18 11:59:32 SAST 2024 : Apache Derby Network Server - 10.14.2.0 - (1828579) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Thu Oct 17 18:59:16 SAST 2024:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0192-9b6b-558f-ffff85a68b67 
+Fri Oct 18 11:59:34 SAST 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0192-9f11-6de2-ffff85a68b67 
 on database directory C:\Users\Franco\Documents\GitHub\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
 Loaded from file:/C:/Program%20Files/Java/jdk-20/Db/db-derby-10.14.2.0-bin/lib/derby.jar
 java.vendor=Oracle Corporation
