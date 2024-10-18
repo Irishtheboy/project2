@@ -3,14 +3,14 @@ package za.ac.cput.librarysystemGui;
 import ac.za.cput.librarysystem.dao.UserDAO;
 import ac.za.cput.librarysystem.dao.BookDAO;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class AccountPageGui extends JFrame implements ActionListener {
 
@@ -27,30 +27,35 @@ public class AccountPageGui extends JFrame implements ActionListener {
         super("Account");
         this.userId = userId;
         this.username = username;
-        userDAO = new UserDAO();  // Initialize UserDAO
-        bookDAO = new BookDAO();  // Initialize BookDAO
+
+        // Initialize DAOs
+        userDAO = new UserDAO();
+        bookDAO = new BookDAO();
 
         // Set up fees label and retrieve current outstanding fees
         double fineAmount = userDAO.getFineAmount(userId);
         lblFees = new JLabel("Outstanding Fees: R" + fineAmount, SwingConstants.CENTER);
 
+        // Load background image
         try {
-            backgroundImage = ImageIO.read(getClass().getResourceAsStream(""));
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream("")); // Specify the correct image path
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // Initialize buttons
         topMenuBtn = new JButton("Top Menu");
         feedbackBtn = new JButton("Feedback");
         logOutBtn = new JButton("Log Out");
         paymentsBtn = new JButton("Pay");
 
+        // Initialize panels
         pnlSouth = new JPanel();
         pnlNorth = new JPanel();
         pnlCenter = new JPanel();
-
         lblAccount = new JLabel("Account Overview", SwingConstants.CENTER);
 
+        // Set action listeners for buttons
         feedbackBtn.addActionListener(this);
         topMenuBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
@@ -69,18 +74,20 @@ public class AccountPageGui extends JFrame implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> System.exit(0));  // Exit the application
+        exitItem.addActionListener(e -> System.exit(0)); // Exit the application
+
         JMenuItem feedbackItem = new JMenuItem("Feedback");
-        feedbackItem.addActionListener(this);  // Add ActionListener for feedback
+        feedbackItem.addActionListener(this); // Add ActionListener for feedback
+
         fileMenu.add(feedbackItem);
         fileMenu.add(exitItem);
+        menuBar.add(fileMenu);
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
         helpMenu.add(aboutItem);
-
-        menuBar.add(fileMenu);
         menuBar.add(helpMenu);
+
         setJMenuBar(menuBar);
 
         // Set up the background panel
@@ -88,14 +95,16 @@ public class AccountPageGui extends JFrame implements ActionListener {
         backgroundPanel.setLayout(new BorderLayout());
         setContentPane(backgroundPanel);
 
-        pnlNorth.setLayout(new GridLayout(2, 1));  // Set the layout to hold 2 components
+        // North panel setup
+        pnlNorth.setLayout(new GridLayout(2, 1)); // Set the layout to hold 2 components
         pnlNorth.add(lblAccount);
-        pnlNorth.add(lblFees);  // Add the fees label to the north panel
+        pnlNorth.add(lblFees); // Add the fees label to the north panel
         pnlNorth.setOpaque(false);
 
-        // Create a panel for the rented books section
-        pnlCenter.setLayout(new GridLayout(0, 1));  // Adjust layout as needed
+        // Center panel for rented books
+        pnlCenter.setLayout(new GridLayout(0, 1)); // Adjust layout as needed
         List<Object[]> rentedBooks = bookDAO.getRentedBooks(userId);
+        
         if (rentedBooks.isEmpty()) {
             JLabel noBooksLabel = new JLabel("No books currently rented.", SwingConstants.CENTER);
             pnlCenter.add(noBooksLabel);
@@ -108,17 +117,20 @@ public class AccountPageGui extends JFrame implements ActionListener {
             }
         }
 
-        pnlSouth.setLayout(new GridLayout(1, 4));  // Adjust column count if needed
+        // South panel setup
+        pnlSouth.setLayout(new GridLayout(1, 4)); // Adjust column count if needed
         pnlSouth.add(topMenuBtn);
         pnlSouth.add(feedbackBtn);
         pnlSouth.add(logOutBtn);
         pnlSouth.add(paymentsBtn);
         pnlSouth.setOpaque(false);
 
+        // Add panels to the background panel
         backgroundPanel.add(pnlNorth, BorderLayout.NORTH);
         backgroundPanel.add(pnlCenter, BorderLayout.CENTER);
         backgroundPanel.add(pnlSouth, BorderLayout.SOUTH);
 
+        // Final GUI setup
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -137,26 +149,31 @@ public class AccountPageGui extends JFrame implements ActionListener {
             new TopMenu();
             dispose();
         } else if (e.getSource() == paymentsBtn) {
-            double fineAmount = userDAO.getFineAmount(userId);
-            if (fineAmount > 0) {
-                int confirm = JOptionPane.showConfirmDialog(this,
-                        "You have a fine of R" + fineAmount + ". Do you want to pay it now?",
-                        "Confirm Payment", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    boolean paymentSuccess = userDAO.payFine(userId);
-                    if (paymentSuccess) {
-                        JOptionPane.showMessageDialog(this, "Fine paid successfully.");
-                        lblFees.setText("Outstanding Fees: R0");  // Update the fees label to show no outstanding fees
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Failed to process payment. Please try again.");
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "You have no outstanding fines.");
-            }
+            handlePayments();
         }
     }
 
+    private void handlePayments() {
+        double fineAmount = userDAO.getFineAmount(userId);
+        if (fineAmount > 0) {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "You have a fine of R" + fineAmount + ". Do you want to pay it now?",
+                    "Confirm Payment", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                boolean paymentSuccess = userDAO.payFine(userId);
+                if (paymentSuccess) {
+                    JOptionPane.showMessageDialog(this, "Fine paid successfully.");
+                    lblFees.setText("Outstanding Fees: R0"); // Update the fees label
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to process payment. Please try again.");
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "You have no outstanding fines.");
+        }
+    }
+
+    // Background panel class for custom painting
     class BackgroundPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
