@@ -29,7 +29,6 @@ public class BookLib extends JFrame implements ActionListener {
     private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
     private JTable borrowHistoryTable; // JTable for borrow history
 
-
     public BookLib() {
         bookDAO = new BookDAO();
 
@@ -68,6 +67,11 @@ public class BookLib extends JFrame implements ActionListener {
         checkoutbtn = new JButton("Check out");
         topMenubtn = new JButton("Top Menu");
 
+        accountbtn.setBackground(Color.blue);
+        checkoutbtn.setBackground(Color.blue);
+        topMenubtn.setBackground(Color.blue);
+        searchButton.setBackground(Color.yellow);
+
         bottomPanel.add(accountbtn);
         bottomPanel.add(checkoutbtn);
         bottomPanel.add(topMenubtn);
@@ -83,7 +87,7 @@ public class BookLib extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-       private void createMenuBar() {
+    private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");

@@ -4,17 +4,13 @@ import za.ac.cput.librarysystemGUI.AudioBook;
 import za.ac.cput.librarysystemGUI.AboutPage;
 import za.ac.cput.librarysystemGUI.BookLib;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-/**
- *
- * @author Sabura11
- */
 public class TopMenu extends JFrame implements ActionListener {
 
     private JPanel pnlCenter;
@@ -24,17 +20,18 @@ public class TopMenu extends JFrame implements ActionListener {
     public TopMenu() {
         super("Top Menu");
 
-        // Initialize components
         pnlCenter = new JPanel();
         btnBooks = new JButton("Books");
         btnAudio = new JButton("Audio");
-        lblTitle = new JLabel("Welcome to the library system!", SwingConstants.CENTER); // Center lbl text
-
+        lblTitle = new JLabel("Welcome to the library system!", SwingConstants.CENTER);
+        
+        btnBooks.setBackground(Color.green);
+        btnAudio.setBackground(Color.green);
+        this.setBackground(Color.yellow);
         setTopMenu();
     }
 
     public void setTopMenu() {
-        // Set up the menu bar
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
@@ -42,27 +39,26 @@ public class TopMenu extends JFrame implements ActionListener {
         exitItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0); // Exit the application
+                System.exit(0);
             }
         });
         fileMenu.add(exitItem);
         
-        // Add Feedback option to the file menu
         JMenuItem feedbackItem = new JMenuItem("Feedback");
         feedbackItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new FeedbackPage(); // Open the feedback page
+                new FeedbackPage();
             }
         });
-        fileMenu.add(feedbackItem); // Add the feedback item to the file menu
+        fileMenu.add(feedbackItem);
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AboutPage(); // Open the feedback page
+                new AboutPage();
             }
         });
         helpMenu.add(aboutItem);
@@ -72,52 +68,46 @@ public class TopMenu extends JFrame implements ActionListener {
 
         setJMenuBar(menuBar);
 
-        // Set up the main frame
-        this.setSize(400, 150); // Increased height to accommodate label
+        this.setSize(400, 150);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Use BoxLayout for simpler layout management
-        pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.Y_AXIS)); // Vertical layout
+        pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.Y_AXIS));
 
-        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align label
-        pnlCenter.add(lblTitle); // Add label to the panel
+        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlCenter.add(lblTitle);
 
-        // Create a new JPanel for buttons
         JPanel btnPanel = new JPanel();
-        btnPanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Center buttons in the panel
-        btnBooks.addActionListener(this); // Add action listeners
+        btnPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        btnBooks.addActionListener(this);
         btnAudio.addActionListener(this);
         
-        btnPanel.add(btnBooks); // Add books button
-        btnPanel.add(btnAudio); // Add audio button
+        btnPanel.add(btnBooks);
+        btnPanel.add(btnAudio);
 
-        pnlCenter.add(btnPanel); // Add button panel to main panel
+        pnlCenter.add(btnPanel);
 
-        this.add(pnlCenter, BorderLayout.CENTER); // Add main panel to frame
-        this.setVisible(true); // Make the frame visible
+        this.add(pnlCenter, BorderLayout.CENTER);
+        this.setVisible(true);
     }
 
     @Override
-public void actionPerformed(ActionEvent e) {
-    Object source = e.getSource(); // Get the source of the event
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
 
-    if (source == btnBooks) {
-        JOptionPane.showMessageDialog(this, "Welcome to the books section");
-        new BookLib(); // Open the BookLib window
-        dispose(); // Close the current window
-    } else if (source == btnAudio) {
-        JOptionPane.showMessageDialog(this, "Welcome to the audio section");
-        new AudioBook(); // Open the AudioBook window
-        dispose(); // Close the current window
-    } else {
-        // Optional: Handle other buttons or show an error message
-        JOptionPane.showMessageDialog(this, "Unknown action performed");
+        if (source == btnBooks) {
+            JOptionPane.showMessageDialog(this, "Welcome to the books section");
+            new BookLib();
+            dispose();
+        } else if (source == btnAudio) {
+            JOptionPane.showMessageDialog(this, "Welcome to the audio section");
+            new AudioBook();
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Unknown action performed");
+        }
     }
-}
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(TopMenu::new);
     }
 }
-

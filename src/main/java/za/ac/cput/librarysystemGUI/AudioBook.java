@@ -66,6 +66,11 @@ public class AudioBook extends JFrame implements ActionListener {
         accountbtn = new JButton("Account");
         checkoutbtn = new JButton("Check out");
         topMenubtn = new JButton("Top Menu");
+        
+        accountbtn.setBackground(Color.blue);
+        checkoutbtn.setBackground(Color.blue);
+        topMenubtn.setBackground(Color.blue);
+        searchButton.setBackground(Color.yellow);
 
         bottomPanel.add(accountbtn);
         bottomPanel.add(checkoutbtn);

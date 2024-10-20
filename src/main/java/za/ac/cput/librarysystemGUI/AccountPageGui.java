@@ -48,6 +48,12 @@ public class AccountPageGui extends JFrame implements ActionListener {
         feedbackBtn = new JButton("Feedback");
         logOutBtn = new JButton("Log Out");
         paymentsBtn = new JButton("Pay");
+        
+        topMenuBtn.setBackground(Color.green);
+        feedbackBtn.setBackground(Color.green);
+        logOutBtn.setBackground(Color.green);
+        paymentsBtn.setBackground(Color.green);
+        
 
         // Initialize panels
         pnlSouth = new JPanel();
