@@ -42,7 +42,7 @@ public class UserDAO {
             pstmt.setString(2, email);
             pstmt.setString(3, phone);
             pstmt.setString(4, password);
-            pstmt.setString(5, role);  // Set the role parameter
+            pstmt.setString(5, role);  
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
@@ -63,9 +63,9 @@ public class UserDAO {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getString("role");  // Return the user's role if the login is successful
+                return rs.getString("role");  
             }
-            return null;  // Return null if no user is found
+            return null;  
         } catch (SQLException e) {
             System.out.println("Error logging in: " + e.getMessage());
             JOptionPane.showMessageDialog(null, "Error logging in: " + e.getMessage());
@@ -169,11 +169,11 @@ public class UserDAO {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error checking book availability: " + e.getMessage());
         }
-        return false; // Book is not available
+        return false; 
     }
 
     public boolean rentBookByUsername(String username, int bookId) {
-        // Step 1: Get the USERID based on the username
+        
         String getUserIdSQL = "SELECT userid FROM USERS WHERE username = ?";
         int userId = -1;
 
@@ -191,7 +191,7 @@ public class UserDAO {
             return false;
         }
 
-        // Step 2: Rent the book using the USERID
+        
         String insertRentSQL = "INSERT INTO RENTALS (userid, bookid, rent_date) VALUES (?, ?, CURRENT_DATE)";
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(insertRentSQL)) {
             pstmt.setInt(1, userId);
@@ -205,7 +205,7 @@ public class UserDAO {
     }
 
     public List<Object[]> getUserAccountDetails(String username) {
-        // Step 1: Get the USERID based on the username
+        
         String getUserIdSQL = "SELECT userid FROM USERS WHERE username = ?";
         int userId = -1;
 
@@ -223,7 +223,7 @@ public class UserDAO {
             return null;
         }
 
-        // Step 2: Fetch account details using USERID
+       
         String query = "SELECT COUNT(CASE WHEN return_date IS NULL THEN 1 END) AS overdue_books, "
                 + "SUM(CASE WHEN return_date IS NULL THEN fine ELSE 0 END) AS total_fine, "
                 + "COUNT(*) AS total_loaned_books "
@@ -254,16 +254,16 @@ public class UserDAO {
             int rowsUpdated = pstmt.executeUpdate();
 
             if (rowsUpdated > 0) {
-                return true; // Fine paid successfully
+                return true; 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return false; // Failed to pay fine
+        return false; 
     }
 
-    // Method to get the fine amount for the user
+    
     public double getFineAmount(int userId) {
         String query = "SELECT SUM(FINE_AMOUNT) AS totalFine FROM FINES WHERE USERID = ? AND IS_PAID = FALSE";
         double fineAmount = 0;

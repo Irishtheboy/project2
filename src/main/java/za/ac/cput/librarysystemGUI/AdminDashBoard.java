@@ -33,12 +33,12 @@ public class AdminDashBoard extends JFrame {
     private UserDAO userDAO;
     private BookDAO bookDAO;
     private JTextArea feedbackTextArea;
-     private JTable borrowHistoryTable; // JTable for borrow history
-      private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
+     private JTable borrowHistoryTable; 
+      private DefaultTableModel borrowHistoryModel; 
 
     public AdminDashBoard() {
-        userDAO = new UserDAO();  // Initialize UserDAO
-        bookDAO = new BookDAO();  // Initialize BookDAO
+        userDAO = new UserDAO();  
+        bookDAO = new BookDAO();  
         createMenuBar();
 
         setTitle("Admin Dashboard");
@@ -46,32 +46,32 @@ public class AdminDashBoard extends JFrame {
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        // Create a tabbed pane
+        
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Panel for Books
+        
         JPanel booksPanel = new JPanel();
         booksPanel.setLayout(new BorderLayout());
         booksPanel.setBorder(BorderFactory.createTitledBorder("Books"));
 
-        // Table for Books
+        
         String[] bookColumnNames = {"Book ID", "Title", "Author", "Genre", "ISBN", "Published Year", "Available", "Image"};
-        Object[][] bookData = {};  // Will be populated from the database
+        Object[][] bookData = {};  
         booksTable = new JTable(new DefaultTableModel(bookData, bookColumnNames)) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Prevent cell editing
+                return false; 
             }
         };
 
-        // Custom renderer for displaying images
+        
     
 
 
         JScrollPane booksScrollPane = new JScrollPane(booksTable);
         booksPanel.add(booksScrollPane, BorderLayout.CENTER);
 
-        // Buttons for Books
+        
         JPanel booksButtonPanel = new JPanel(new FlowLayout());
         btnAddBook = new JButton("Add Book");
         btnDeleteBook = new JButton("Delete Book");
@@ -79,34 +79,32 @@ public class AdminDashBoard extends JFrame {
         booksButtonPanel.add(btnDeleteBook);
         booksPanel.add(booksButtonPanel, BorderLayout.SOUTH);
 
-        // Panel for Users
+        
         JPanel usersPanel = new JPanel();
         usersPanel.setLayout(new BorderLayout());
         usersPanel.setBorder(BorderFactory.createTitledBorder("Users"));
         
-//        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
-//        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
-//        add(tabbedPane, BorderLayout.CENTER);
 
-        // Table for Users
+
+        
         String[] userColumnNames = {"User ID", "Username", "Email", "Role"};
-        Object[][] userData = {};  // Will be populated from the database
+        Object[][] userData = {};  
         usersTable = new JTable(new DefaultTableModel(userData, userColumnNames)) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Prevent cell editing
+                return false; 
             }
         };
         JScrollPane usersScrollPane = new JScrollPane(usersTable);
         usersPanel.add(usersScrollPane, BorderLayout.CENTER);
 
-        // Buttons for Users
+        
         JPanel usersButtonPanel = new JPanel(new FlowLayout());
         btnDeleteUser = new JButton("Delete User");
         usersButtonPanel.add(btnDeleteUser);
         usersPanel.add(usersButtonPanel, BorderLayout.SOUTH);
 
-        // Panel for Feedback
+       
         JPanel feedbackPanel = new JPanel(new BorderLayout());
         feedbackPanel.setBorder(BorderFactory.createTitledBorder("Feedback"));
 
@@ -115,38 +113,37 @@ public class AdminDashBoard extends JFrame {
         JScrollPane feedbackScrollPane = new JScrollPane(feedbackTextArea);
         feedbackPanel.add(feedbackScrollPane, BorderLayout.CENTER);
 
-        // Add panels to the tabbed pane
+        
         tabbedPane.addTab("Books", booksPanel);
         tabbedPane.addTab("Users", usersPanel);
         tabbedPane.addTab("Feedback", feedbackPanel);
 
-        // Add the tabbed pane to the main frame
+        
         add(tabbedPane, BorderLayout.CENTER);
         
-        // Add Logout Button to the Top
+        
         btnLogout = new JButton("Logout");
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         logoutPanel.add(btnLogout);
-        add(logoutPanel, BorderLayout.NORTH);  // Adding the logout button panel to the north of the frame
-
-        // Fetch data and populate tables
+        add(logoutPanel, BorderLayout.NORTH); 
+        
         populateBooksTable();
         populateUsersTable();
         populateFeedback();
 
-        // Set table sizes
+        
         setTableColumnWidths(booksTable);
         setTableColumnWidths(usersTable);
 
-        // Add action listeners
+        
         btnAddBook.addActionListener(e -> showAddBookDialog());
         btnDeleteBook.addActionListener(e -> deleteSelectedBook());
         btnDeleteUser.addActionListener(e -> deleteSelectedUser());
     
-        // Logout Button Action Listener
+        
         btnLogout.addActionListener(e -> {
-            dispose();  // Close the current Admin Dashboard window
-            new LoginPage().setVisible(true);  // Open the login page
+            dispose();  
+            new LoginPage().setVisible(true); 
         });
     }
        private void createMenuBar() {
@@ -157,27 +154,27 @@ public class AdminDashBoard extends JFrame {
         exitItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0); // Exit the application
+                System.exit(0); 
             }
         });
         fileMenu.add(exitItem);
         
-        // Add Feedback option to the file menu
+        
         JMenuItem feedbackItem = new JMenuItem("Feedback");
         feedbackItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new FeedbackPage(); // Open the feedback page
+                new FeedbackPage(); 
             }
         });
-        fileMenu.add(feedbackItem); // Add the feedback item to the file menu
+        fileMenu.add(feedbackItem);
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AboutPage(); // Open the feedback page
+                new AboutPage(); 
             }
         });
         helpMenu.add(aboutItem);
@@ -193,42 +190,42 @@ public class AdminDashBoard extends JFrame {
         for (int i = 0; i < table.getColumnCount(); i++) {
             column = table.getColumnModel().getColumn(i);
             switch (i) {
-                case 0: // Book/User ID
-                    column.setPreferredWidth(50); // Set width for ID column
+                case 0:
+                    column.setPreferredWidth(50); 
                     break;
                 case 1: // Title/Username
-                    column.setPreferredWidth(200); // Set width for Title/Username
+                    column.setPreferredWidth(200); 
                     break;
                 case 2: // Author/Email
-                    column.setPreferredWidth(150); // Set width for Author/Email
+                    column.setPreferredWidth(150); 
                     break;
                 case 3: // Genre/Role
-                    column.setPreferredWidth(100); // Set width for Genre/Role
+                    column.setPreferredWidth(100); 
                     break;
                 case 4: // ISBN
-                    column.setPreferredWidth(100); // Set width for ISBN
+                    column.setPreferredWidth(100); 
                     break;
                 case 5: // Published Year
-                    column.setPreferredWidth(100); // Set width for Published Year
+                    column.setPreferredWidth(100); 
                     break;
                 case 6: // Available
-                    column.setPreferredWidth(70); // Set width for Available
+                    column.setPreferredWidth(70); 
                     break;
-                case 7: // Image
-                    column.setPreferredWidth(150); // Set width for Image
+                case 7: // Image even though i made this optional to check cause there are issues with the display
+                    column.setPreferredWidth(150); 
                     break;
             }
         }
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN); // Adjust the last column width automatically
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN); 
     }
 
     private void populateBooksTable() {
     try {
         List<Object[]> books = bookDAO.getAllBooks();
         DefaultTableModel model = (DefaultTableModel) booksTable.getModel();
-        model.setRowCount(0);  // Clear existing data
+        model.setRowCount(0);  
         for (Object[] book : books) {
-            model.addRow(book);  // Add each book to the table
+            model.addRow(book);  
         }
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error loading books: " + e.getMessage());
@@ -238,15 +235,15 @@ public class AdminDashBoard extends JFrame {
     private void populateUsersTable() {
         List<Object[]> users = userDAO.getAllUsers();
         DefaultTableModel model = (DefaultTableModel) usersTable.getModel();
-        model.setRowCount(0);  // Clear existing data
+        model.setRowCount(0);  
 
         for (Object[] user : users) {
-            model.addRow(user);  // Add each user to the table
+            model.addRow(user);  
         }
     }
 
     private void populateFeedback() {
-        String filePath = "feedback.txt";  // The path to your feedback file
+        String filePath = "feedback.txt";  
         StringBuilder feedbackContent = new StringBuilder();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -263,11 +260,11 @@ public class AdminDashBoard extends JFrame {
      private JPanel createBorrowHistoryPanel() {
         JPanel historyPanel = new JPanel(new BorderLayout());
 
-        // Column Names for Borrow History Table
+        
         String[] historyColumnNames = {"Book ID", "Title", "Author", "Borrow Date", "Return Date"};
         borrowHistoryModel = new DefaultTableModel(historyColumnNames, 0);
 
-        // Fetch borrow history data from the database and populate the table
+        
         List<Object[]> borrowHistory = bookDAO.getBorrowHistory(UserSession.getLoggedInUserId());
         for (Object[] historyEntry : borrowHistory) {
             borrowHistoryModel.addRow(historyEntry);
@@ -283,37 +280,37 @@ public class AdminDashBoard extends JFrame {
     private void showAddBookDialog() {
         JPanel panel = new JPanel(new GridLayout(0, 2));
 
-        // Title
+        
         panel.add(new JLabel("Title:"));
         JTextField titleField = new JTextField();
         panel.add(titleField);
 
-        // Author
+        
         panel.add(new JLabel("Author:"));
         JTextField authorField = new JTextField();
         panel.add(authorField);
 
-        // Genre
+        
         panel.add(new JLabel("Genre:"));
         JTextField genreField = new JTextField();
         panel.add(genreField);
 
-        // ISBN
+        
         panel.add(new JLabel("ISBN:"));
         JTextField isbnField = new JTextField();
         panel.add(isbnField);
 
-        // Year Published
+        
         panel.add(new JLabel("Published Year:"));
         JTextField yearField = new JTextField();
         panel.add(yearField);
 
-        // Availability
+        
         panel.add(new JLabel("Available:"));
         JCheckBox availableCheckbox = new JCheckBox();
         panel.add(availableCheckbox);
 
-        // Image selection
+        
         panel.add(new JLabel("Book Image:"));
         JTextField imageField = new JTextField();
         panel.add(imageField);
@@ -326,7 +323,7 @@ public class AdminDashBoard extends JFrame {
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                imageField.setText(selectedFile.getAbsolutePath()); // Set the path in the text field
+                imageField.setText(selectedFile.getAbsolutePath()); 
             }
         });
 
@@ -338,9 +335,8 @@ public class AdminDashBoard extends JFrame {
             String isbn = isbnField.getText();
             String yearPublishedStr = yearField.getText();
             boolean available = availableCheckbox.isSelected();
-            String imagePath = imageField.getText(); // Get the image path
-
-            // Validation checks
+            String imagePath = imageField.getText(); 
+           
             if (title.isEmpty() || author.isEmpty() || genre.isEmpty() || isbn.isEmpty() || yearPublishedStr.isEmpty() ) {
                 JOptionPane.showMessageDialog(this, "All fields must be filled. Except for images");
                 return;
@@ -354,9 +350,9 @@ public class AdminDashBoard extends JFrame {
                 return;
             }
 
-            // Add the book using DAO
+            
             bookDAO.addBook(title, author, genre, isbn, yearPublished, available, imagePath);
-            populateBooksTable(); // Refresh the books table
+            populateBooksTable(); 
         }
     }
 
@@ -365,7 +361,7 @@ public class AdminDashBoard extends JFrame {
         if (selectedRow != -1) {
             int bookId = (int) booksTable.getValueAt(selectedRow, 0);
             bookDAO.deleteBook(bookId);
-            populateBooksTable(); // Refresh the books table
+            populateBooksTable(); 
         } else {
             JOptionPane.showMessageDialog(this, "Please select a book to delete.");
         }
@@ -376,7 +372,7 @@ public class AdminDashBoard extends JFrame {
         if (selectedRow != -1) {
             int userId = (int) usersTable.getValueAt(selectedRow, 0);
             userDAO.deleteUser(userId);
-            populateUsersTable(); // Refresh the users table
+            populateUsersTable(); 
         } else {
             JOptionPane.showMessageDialog(this, "Please select a user to delete.");
         }

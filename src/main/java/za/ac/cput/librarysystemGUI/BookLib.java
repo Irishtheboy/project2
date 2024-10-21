@@ -22,12 +22,12 @@ public class BookLib extends JFrame implements ActionListener {
     private DefaultTableModel model;
     private JTable bookTable;
     private DefaultTableModel rentedBooksModel;
-    private JTable rentedBooksTable; // New JTable for rented books
+    private JTable rentedBooksTable; 
     private JButton rentButton;
-    private JButton returnButton, searchButton; // Declare returnButton
+    private JButton returnButton, searchButton; 
     private JTextField searchField;
-    private DefaultTableModel borrowHistoryModel; // JTable model for borrow history
-    private JTable borrowHistoryTable; // JTable for borrow history
+    private DefaultTableModel borrowHistoryModel; 
+    private JTable borrowHistoryTable; 
 
     public BookLib() {
         bookDAO = new BookDAO();
@@ -42,8 +42,8 @@ public class BookLib extends JFrame implements ActionListener {
         JPanel tableBookPanel = createTableBookPanel();
         tabbedPane.addTab("Books", tableBookPanel);
 
-        JPanel rentedBooksPanel = createRentedBooksPanel(); // Create new panel for rented books
-        tabbedPane.addTab("My Rented Books", rentedBooksPanel); // Add tab for rented books
+        JPanel rentedBooksPanel = createRentedBooksPanel(); 
+        tabbedPane.addTab("My Rented Books", rentedBooksPanel); 
 
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -75,8 +75,8 @@ public class BookLib extends JFrame implements ActionListener {
         bottomPanel.add(accountbtn);
         bottomPanel.add(checkoutbtn);
         bottomPanel.add(topMenubtn);
-        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); // Create new panel for borrow history
-        tabbedPane.addTab("Borrow History", borrowHistoryPanel); // Add tab for borrow history
+        JPanel borrowHistoryPanel = createBorrowHistoryPanel(); 
+        tabbedPane.addTab("Borrow History", borrowHistoryPanel); 
 
         accountbtn.addActionListener(this);
         checkoutbtn.addActionListener(this);
@@ -100,11 +100,11 @@ public class BookLib extends JFrame implements ActionListener {
     private JPanel createBorrowHistoryPanel() {
         JPanel historyPanel = new JPanel(new BorderLayout());
 
-        // Column Names for Borrow History Table
+        
         String[] historyColumnNames = {"Book ID", "Title", "Author", "Borrow Date", "Return Date"};
         borrowHistoryModel = new DefaultTableModel(historyColumnNames, 0);
 
-        // Fetch borrow history data from the database and populate the table
+        
         List<Object[]> borrowHistory = bookDAO.getBorrowHistory(UserSession.getLoggedInUserId());
         for (Object[] historyEntry : borrowHistory) {
             borrowHistoryModel.addRow(historyEntry);
@@ -117,15 +117,15 @@ public class BookLib extends JFrame implements ActionListener {
         return historyPanel;
     }
 
-    // Create Table Panel for Books
+    
     private JPanel createTableBookPanel() {
         JPanel tablePanel = new JPanel(new BorderLayout());
 
-        // Column Names for the Book Table
+        
         String[] columnNames = {"Book ID", "Title", "Author", "Available"};
         model = new DefaultTableModel(columnNames, 0);
 
-        // Fetch all books from the database and populate the table
+        
         List<Object[]> books = bookDAO.getAllBooks();
         for (Object[] book : books) {
             model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"});
@@ -135,53 +135,52 @@ public class BookLib extends JFrame implements ActionListener {
         JScrollPane scrollPane = new JScrollPane(bookTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Rent Button
+        
         rentButton = new JButton("Rent Selected Book");
         rentButton.addActionListener(e -> rentSelectedBook());
         tablePanel.add(rentButton, BorderLayout.SOUTH);
-        // Search Panel
+        
         JPanel searchPanel = new JPanel(new FlowLayout());
-        searchField = new JTextField(20); // Text field for search input
-        searchButton = new JButton("Search"); // Button to initiate search
-        searchPanel.add(new JLabel("Search Book:")); // Label for search
-        searchPanel.add(searchField); // Add text field to panel
-        searchPanel.add(searchButton); // Add search button to panel
+        searchField = new JTextField(20); 
+        searchButton = new JButton("Search");
+        searchPanel.add(new JLabel("Search Book:")); 
+        searchPanel.add(searchField); 
+        searchPanel.add(searchButton); 
 
-        searchButton.addActionListener(e -> searchBooks()); // Add action listener to search button
+        searchButton.addActionListener(e -> searchBooks()); 
 
-        tablePanel.add(searchPanel, BorderLayout.NORTH); // Add search panel to the top of the table panel
-
+        tablePanel.add(searchPanel, BorderLayout.NORTH); 
         return tablePanel;
     }
-    // Search for books based on the title or author
+    
 
     private void searchBooks() {
-        String query = searchField.getText().trim().toLowerCase(); // Get search input and convert to lowercase
+        String query = searchField.getText().trim().toLowerCase(); 
         if (query.isEmpty()) {
-            refreshAvailableBooksTable(); // Show all books if search field is empty
+            refreshAvailableBooksTable(); 
             return;
         }
 
-        model.setRowCount(0); // Clear existing rows
-        List<Object[]> books = bookDAO.getAllBooks(); // Fetch all books from database
+        model.setRowCount(0); 
+        List<Object[]> books = bookDAO.getAllBooks(); 
         for (Object[] book : books) {
-            String title = book[1].toString().toLowerCase(); // Book title
-            String author = book[2].toString().toLowerCase(); // Book author
+            String title = book[1].toString().toLowerCase(); 
+            String author = book[2].toString().toLowerCase(); 
             if (title.contains(query) || author.contains(query)) {
                 model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"}); // Add filtered results to table
             }
         }
     }
 
-    // Create Table Panel for Rented Books
+    
     private JPanel createRentedBooksPanel() {
         JPanel rentedPanel = new JPanel(new BorderLayout());
 
-        // Column Names for Rented Books Table
+        
         String[] rentedColumnNames = {"Book ID", "Title", "Author", "Return Date"};
         rentedBooksModel = new DefaultTableModel(rentedColumnNames, 0);
 
-        // Fetch rented books from the database and populate the table
+        
         List<Object[]> rentedBooks = bookDAO.getRentedBooks(UserSession.getLoggedInUserId());
         for (Object[] rentedBook : rentedBooks) {
             rentedBooksModel.addRow(rentedBook);
@@ -191,7 +190,7 @@ public class BookLib extends JFrame implements ActionListener {
         JScrollPane scrollPane = new JScrollPane(rentedBooksTable);
         rentedPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Return Button
+        
         returnButton = new JButton("Return Selected Book");
         returnButton.addActionListener(e -> returnSelectedBook());
         rentedPanel.add(returnButton, BorderLayout.SOUTH);
@@ -199,8 +198,7 @@ public class BookLib extends JFrame implements ActionListener {
         return rentedPanel;
     }
 
-    // Rent a selected book
-// Rent a selected book
+     
     private void rentSelectedBook() {
         int selectedRow = bookTable.getSelectedRow();
         if (selectedRow >= 0) {
@@ -208,7 +206,7 @@ public class BookLib extends JFrame implements ActionListener {
             boolean isAvailable = "Yes".equals(bookTable.getValueAt(selectedRow, 3));
 
             if (isAvailable) {
-                // Prompt for admin password before renting
+                
                 JPasswordField passwordField = new JPasswordField();
                 Object[] message = {
                     "Admin Password:", passwordField
@@ -218,19 +216,19 @@ public class BookLib extends JFrame implements ActionListener {
 
                 if (option == JOptionPane.OK_OPTION) {
                     String enteredPassword = new String(passwordField.getPassword());
-                    String adminPassword = "admin123"; // Set the admin password here
+                    String adminPassword = "admin123"; 
 
                     if (enteredPassword.equals(adminPassword)) {
-                        // Proceed with renting the book if the password is correct
-                        int userId = UserSession.getLoggedInUserId(); // Get the logged-in user ID
-                        boolean success = bookDAO.rentBook(userId, bookId); // Pass the userId here
+                      
+                        int userId = UserSession.getLoggedInUserId(); 
+                        boolean success = bookDAO.rentBook(userId, bookId); 
                         if (success) {
                             JOptionPane.showMessageDialog(this, "Book rented successfully!");
                             rentalCount++;
                             rentalCountLabel.setText("Books rented: " + rentalCount);
-                            // Update availability in the table
+                            
                             model.setValueAt("No", selectedRow, 3);
-                            // Refresh the rented books table
+                            
                             updateRentedBooksTable();
                         } else {
                             JOptionPane.showMessageDialog(this, "Failed to rent the book.");
@@ -247,7 +245,7 @@ public class BookLib extends JFrame implements ActionListener {
         }
     }
 
-    // Return a selected book
+    
     private void returnSelectedBook() {
         int selectedRow = rentedBooksTable.getSelectedRow();
         if (selectedRow >= 0) {
@@ -255,11 +253,11 @@ public class BookLib extends JFrame implements ActionListener {
             boolean success = bookDAO.returnBook(UserSession.getLoggedInUserId(), bookId);
             if (success) {
                 JOptionPane.showMessageDialog(this, "Book returned successfully!");
-                // Update the rented books table
+                
                 rentedBooksModel.removeRow(selectedRow);
                 rentalCount--;
                 rentalCountLabel.setText("Books rented: " + rentalCount);
-                // Refresh the available books table
+                
                 refreshAvailableBooksTable();
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to return the book.");
@@ -269,18 +267,18 @@ public class BookLib extends JFrame implements ActionListener {
         }
     }
 
-    // Refresh the rented books table
+    
     private void updateRentedBooksTable() {
-        rentedBooksModel.setRowCount(0); // Clear existing rows
+        rentedBooksModel.setRowCount(0); 
         List<Object[]> rentedBooks = bookDAO.getRentedBooks(UserSession.getLoggedInUserId());
         for (Object[] rentedBook : rentedBooks) {
             rentedBooksModel.addRow(rentedBook);
         }
     }
 
-    // Refresh the available books table
+    
     private void refreshAvailableBooksTable() {
-        model.setRowCount(0); // Clear existing rows
+        model.setRowCount(0); 
         List<Object[]> books = bookDAO.getAllBooks();
         for (Object[] book : books) {
             model.addRow(new Object[]{book[0], book[1], book[2], (boolean) book[6] ? "Yes" : "No"});
@@ -292,7 +290,7 @@ public class BookLib extends JFrame implements ActionListener {
         if (e.getSource() == accountbtn) {
             int userId = UserSession.getLoggedInUserId();
             String username = UserSession.getLoggedInUsername();
-            new AccountPageGui(userId, username);  // Pass the user ID and username
+            new AccountPageGui(userId, username);  
             dispose();
         } else if (e.getSource() == checkoutbtn) {
             JOptionPane.showMessageDialog(null, "Checked out successfully");

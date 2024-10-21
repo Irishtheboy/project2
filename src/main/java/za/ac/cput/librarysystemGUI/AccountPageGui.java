@@ -28,22 +28,22 @@ public class AccountPageGui extends JFrame implements ActionListener {
         this.userId = userId;
         this.username = username;
 
-        // Initialize DAOs
+       
         userDAO = new UserDAO();
         bookDAO = new BookDAO();
 
-        // Set up fees label and retrieve current outstanding fees
+       
         double fineAmount = userDAO.getFineAmount(userId);
         lblFees = new JLabel("Outstanding Fees: R" + fineAmount, SwingConstants.CENTER);
 
-        // Load background image
+        
         try {
             backgroundImage = ImageIO.read(getClass().getResourceAsStream("")); // Specify the correct image path
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Initialize buttons
+        
         topMenuBtn = new JButton("Top Menu");
         feedbackBtn = new JButton("Feedback");
         logOutBtn = new JButton("Log Out");
@@ -55,19 +55,19 @@ public class AccountPageGui extends JFrame implements ActionListener {
         paymentsBtn.setBackground(Color.green);
         
 
-        // Initialize panels
+        
         pnlSouth = new JPanel();
         pnlNorth = new JPanel();
         pnlCenter = new JPanel();
         lblAccount = new JLabel("Account Overview", SwingConstants.CENTER);
 
-        // Set action listeners for buttons
+        
         feedbackBtn.addActionListener(this);
         topMenuBtn.addActionListener(this);
         logOutBtn.addActionListener(this);
         paymentsBtn.addActionListener(this);
 
-        // Set up the main GUI
+        
         setGui();
     }
 
@@ -76,14 +76,14 @@ public class AccountPageGui extends JFrame implements ActionListener {
         setSize(500, 400);
         setLayout(new BorderLayout());
 
-        // Create and set up the menu bar
+       
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> System.exit(0)); // Exit the application
+        exitItem.addActionListener(e -> System.exit(0)); 
 
         JMenuItem feedbackItem = new JMenuItem("Feedback");
-        feedbackItem.addActionListener(this); // Add ActionListener for feedback
+        feedbackItem.addActionListener(this); 
 
         fileMenu.add(feedbackItem);
         fileMenu.add(exitItem);
@@ -96,19 +96,19 @@ public class AccountPageGui extends JFrame implements ActionListener {
 
         setJMenuBar(menuBar);
 
-        // Set up the background panel
+       
         BackgroundPanel backgroundPanel = new BackgroundPanel();
         backgroundPanel.setLayout(new BorderLayout());
         setContentPane(backgroundPanel);
 
-        // North panel setup
-        pnlNorth.setLayout(new GridLayout(2, 1)); // Set the layout to hold 2 components
+        
+        pnlNorth.setLayout(new GridLayout(2, 1)); 
         pnlNorth.add(lblAccount);
-        pnlNorth.add(lblFees); // Add the fees label to the north panel
+        pnlNorth.add(lblFees); 
         pnlNorth.setOpaque(false);
 
-        // Center panel for rented books
-        pnlCenter.setLayout(new GridLayout(0, 1)); // Adjust layout as needed
+        
+        pnlCenter.setLayout(new GridLayout(0, 1)); 
         List<Object[]> rentedBooks = bookDAO.getRentedBooks(userId);
         
         if (rentedBooks.isEmpty()) {
@@ -123,20 +123,20 @@ public class AccountPageGui extends JFrame implements ActionListener {
             }
         }
 
-        // South panel setup
-        pnlSouth.setLayout(new GridLayout(1, 4)); // Adjust column count if needed
+        
+        pnlSouth.setLayout(new GridLayout(1, 4)); 
         pnlSouth.add(topMenuBtn);
         pnlSouth.add(feedbackBtn);
         pnlSouth.add(logOutBtn);
         pnlSouth.add(paymentsBtn);
         pnlSouth.setOpaque(false);
 
-        // Add panels to the background panel
+        
         backgroundPanel.add(pnlNorth, BorderLayout.NORTH);
         backgroundPanel.add(pnlCenter, BorderLayout.CENTER);
         backgroundPanel.add(pnlSouth, BorderLayout.SOUTH);
 
-        // Final GUI setup
+        
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -179,7 +179,7 @@ public class AccountPageGui extends JFrame implements ActionListener {
         }
     }
 
-    // Background panel class for custom painting
+    
     class BackgroundPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {

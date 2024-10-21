@@ -31,7 +31,7 @@ public class SubmitFrameGui extends JFrame {
 
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(3, 3));
-//        labelPanel.setBackground(Color.ORANGE); 
+
 
         JLabel label1 = new JLabel("Books reserved.", SwingConstants.CENTER);
         JLabel label2 = new JLabel("Make sure to pick up books at the library.", SwingConstants.CENTER);
@@ -50,14 +50,7 @@ public class SubmitFrameGui extends JFrame {
         JButton topMenuButton = new JButton("Top Menu");
         JButton logoutButton = new JButton("Log out");
 
-//        accountButton.setBackground(Color.CYAN);
-//        accountButton.setForeground(Color.BLACK);
-//
-//        topMenuButton.setBackground(Color.YELLOW);
-//        topMenuButton.setForeground(Color.BLACK);
-//
-//        logoutButton.setBackground(Color.CYAN);
-//        logoutButton.setForeground(Color.BLACK);
+
         buttonPanel.add(accountButton);
         buttonPanel.add(topMenuButton);
         buttonPanel.add(logoutButton);

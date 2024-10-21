@@ -189,7 +189,7 @@ public class SignupPageGui extends JFrame {
         emailField.setText("");
         phoneField.setText("");
         passwordField.setText("");
-        roleComboBox.setSelectedIndex(0);  // Reset role selection
+        roleComboBox.setSelectedIndex(0);  
     }
 
     public static void main(String[] args) {

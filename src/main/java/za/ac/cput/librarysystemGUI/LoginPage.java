@@ -25,12 +25,12 @@ public class LoginPage extends JFrame {
     private void initializeComponents() {
         setTitle("User Login");
 
-        // Main panel with rounded corners and shadow
+        
         mainPanel = new JPanel();
         mainPanel.setBackground(new Color(255, 255, 255, 230));
         mainPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 150, 250), 2));
         mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setOpaque(true); // Ensure panel is opaque
+        mainPanel.setOpaque(true); 
 
         headingLabel = new JLabel("Login", JLabel.CENTER);
         headingLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -62,7 +62,7 @@ public class LoginPage extends JFrame {
 
     private void setupLayout() {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Add padding
+        gbc.insets = new Insets(10, 10, 10, 10); 
 
         gbc.gridx = 0;
         gbc.gridy = 0;

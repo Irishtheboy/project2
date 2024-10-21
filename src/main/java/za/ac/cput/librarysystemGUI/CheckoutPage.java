@@ -116,7 +116,7 @@ public class CheckoutPage extends JFrame implements ActionListener {
         } else if (e.getSource() == accountBtn) {
             int userId = UserSession.getLoggedInUserId();
             String username = UserSession.getLoggedInUsername();
-            new AccountPageGui(userId, username);  // Pass the user ID and username
+            new AccountPageGui(userId, username);  
             dispose();
         }
     }

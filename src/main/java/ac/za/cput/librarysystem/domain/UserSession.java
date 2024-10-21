@@ -22,12 +22,12 @@ public class UserSession {
         loggedInUserId = userId;
     }
 
-    // New method to retrieve user ID from the database
+
     public static void retrieveAndSetUserId() {
         UserDAO userDAO = new UserDAO();
-        int userId = userDAO.getUserIdByUsername(loggedInUsername); // Call your existing method
+        int userId = userDAO.getUserIdByUsername(loggedInUsername); 
         if (userId != -1) {
-            setLoggedInUserId(userId); // Set the user ID if found
+            setLoggedInUserId(userId); 
         } else {
             System.out.println("User ID not found for username: " + loggedInUsername);
         }

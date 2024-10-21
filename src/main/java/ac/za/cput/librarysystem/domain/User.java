@@ -53,15 +53,15 @@ public class User {
     }
 
     public int getRentedBooksCount() {
-        return rentedBooksCount; // Get the count of rented books
+        return rentedBooksCount;
     }
 
     public void incrementRentedBooksCount() {
-        rentedBooksCount++; // Increment the rented books count
+        rentedBooksCount++; 
     }
 
     public void decrementRentedBooksCount() {
-        rentedBooksCount--; // Decrement the rented books count
+        rentedBooksCount--; 
     }
 
     @Override
@@ -71,7 +71,7 @@ public class User {
                 ", userEmail='" + userEmail + '\'' +
                 ", userPhone='" + userPhone + '\'' +
                 ", userPassword='" + userPassword + '\'' +
-                ", rentedBooksCount=" + rentedBooksCount + // Add rentedBooksCount to the string
+                ", rentedBooksCount=" + rentedBooksCount + 
                 '}';
     }
 }

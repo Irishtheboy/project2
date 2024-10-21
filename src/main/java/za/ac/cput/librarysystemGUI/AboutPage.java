@@ -9,18 +9,18 @@ import java.awt.event.ActionListener;
 public class AboutPage extends JFrame implements ActionListener {
 
     private JButton backButton;
-    private TopMenu topMenu; // Store the reference to TopMenu
+    private TopMenu topMenu; 
 
-    // Constructor with TopMenu as argument
+    
     public AboutPage(TopMenu topMenu) {
         super("About");
-        this.topMenu = topMenu;  // Store TopMenu reference
+        this.topMenu = topMenu;  
 
-        // Set layout
+        
         setLayout(new BorderLayout());
-        setResizable(false); // Prevent resizing for a more controlled layout
+        setResizable(false); 
 
-        // Purpose Section
+        
         JPanel pnlPurpose = new JPanel();
         pnlPurpose.setLayout(new GridLayout(2, 1));
         JLabel lblPurposeTitle = new JLabel("Purpose of the Library System", JLabel.CENTER);
@@ -41,7 +41,7 @@ public class AboutPage extends JFrame implements ActionListener {
         JPanel pnlFAQs = new JPanel();
         pnlFAQs.setLayout(new BorderLayout());
         JLabel lblFAQsTitle = new JLabel("Frequently Asked Questions (FAQs)", JLabel.CENTER);
-        lblFAQsTitle.setFont(new Font("Arial", Font.BOLD, 16)); // Bold font for title
+        lblFAQsTitle.setFont(new Font("Arial", Font.BOLD, 16)); 
         lblFAQsTitle.setVerticalAlignment(JLabel.TOP);
         lblFAQsTitle.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
@@ -57,12 +57,12 @@ public class AboutPage extends JFrame implements ActionListener {
         txtFAQs.setLineWrap(true);
         txtFAQs.setWrapStyleWord(true);
         txtFAQs.setPreferredSize(new Dimension(450, 250)); // Adjust height for more content
-        txtFAQs.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+        txtFAQs.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
 
         pnlFAQs.add(lblFAQsTitle, BorderLayout.NORTH);
         pnlFAQs.add(txtFAQs, BorderLayout.CENTER);
 
-        // Emergency Contact Section
+        
         JPanel pnlContact = new JPanel();
         pnlContact.setLayout(new GridLayout(2, 1));
         JLabel lblContactTitle = new JLabel("Emergency Contact Information", JLabel.CENTER);
@@ -78,13 +78,13 @@ public class AboutPage extends JFrame implements ActionListener {
         pnlContact.add(lblContactTitle);
         pnlContact.add(txtContact);
 
-        // Back Button to go back to TopMenu
+        
         backButton = new JButton("Back to Menu");
-        backButton.setBackground(new Color(76, 175, 80)); // Green background
-        backButton.setForeground(Color.WHITE); // White text
-        backButton.addActionListener(this); // Add action listener to the button
+        backButton.setBackground(new Color(76, 175, 80)); 
+        backButton.setForeground(Color.WHITE); 
+        backButton.addActionListener(this); 
 
-        // Add panels to frame
+        
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(pnlPurpose);
@@ -92,29 +92,29 @@ public class AboutPage extends JFrame implements ActionListener {
         mainPanel.add(pnlContact);
         
         add(mainPanel, BorderLayout.CENTER);
-        add(backButton, BorderLayout.SOUTH); // Add the Back button to the bottom
+        add(backButton, BorderLayout.SOUTH); 
 
-        // Frame settings
+        
         setSize(500, 450);
         setLocationRelativeTo(null);
         setVisible(true);
 
-        // Set default close operation
+        
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    // Overloaded constructor without TopMenu argument
+    
     public AboutPage() {
-        this(null);  // Call the original constructor, passing null for TopMenu
+        this(null);  
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == backButton) {
             if (topMenu != null) {
-                topMenu.setVisible(true); // Make TopMenu visible again
+                topMenu.setVisible(true); 
             }
-            dispose(); // Close AboutPage
+            dispose(); 
         }
     }
 }

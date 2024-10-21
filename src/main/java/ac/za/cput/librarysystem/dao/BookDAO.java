@@ -48,7 +48,7 @@ public class BookDAO {
 
     public List<Book> getAllBookss() {
         List<Book> bookList = new ArrayList<>();
-        String query = "SELECT title, author, image_path FROM books"; // Ensure this matches your actual table and column names
+        String query = "SELECT title, author, image_path FROM books"; 
 
         try (Connection conn = DBConnection.derbyConnection(); PreparedStatement pstmt = conn.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) { // Execute the query and get a ResultSet
 
@@ -93,7 +93,7 @@ public class BookDAO {
         return borrowHistory;
     }
 
-    // Method to add a book to the database
+    
     public void addBook(String title, String author, String genre, String isbn, int yearPublished, boolean available, String imagePath) {
         String sql = "INSERT INTO BOOKS (title, author, genre, isbn, published_year, available, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -153,16 +153,16 @@ public class BookDAO {
     }
 
     public boolean rentBookByUsername(String username, int bookId) {
-        // Create an instance of UserDAO (if not already done in your class)
+        
         UserDAO userDAO = new UserDAO();
 
-        // First, check if the user exists
+        
         if (userDAO.getUserUsername(username) == null) {
             JOptionPane.showMessageDialog(null, "User does not exist.");
             return false;
         }
 
-        // Then, check if the book is available
+        
         if (!isBookAvailable(bookId)) {
             JOptionPane.showMessageDialog(null, "Book is not available for rent.");
             return false;
@@ -173,22 +173,22 @@ public class BookDAO {
             pstmt.setString(1, username);
             pstmt.setInt(2, bookId);
             int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0; // Return true if rental was successful
+            return rowsAffected > 0; 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error renting book: " + e.getMessage());
-            return false; // Rental failed
+            return false; 
         }
     }
 
     public boolean rentBook(int userId, int bookId) {
         
-        // Check if the user already has 3 active rentals
+        
         if (getLoanedBooksCount(userId) >= 3) {
             JOptionPane.showMessageDialog(null, 
                 "You cannot rent more than 3 books at a time.", 
                 "Rental Limit Exceeded", 
                 JOptionPane.WARNING_MESSAGE);
-            return false; // Limit exceeded, rental not allowed
+            return false; 
         }
         
         String updateBookAvailability = "UPDATE books SET available = false WHERE bookid = ?";
@@ -196,18 +196,18 @@ public class BookDAO {
         String insertRentalRecord = "INSERT INTO rentals (userid, bookid, rent_date, return_date, status) VALUES (?, ?, CURRENT_DATE, ?, 'active')";
 
         try (Connection connection = DBConnection.derbyConnection()) {
-            connection.setAutoCommit(false); // Start transaction
+            connection.setAutoCommit(false); 
 
-            // Update the book availability
+            
             try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
                 updateBookStmt.setInt(1, bookId);
                 int rowsUpdated = updateBookStmt.executeUpdate();
 
-                // If book availability update was successful, insert the rental record
+                
                 if (rowsUpdated > 0) {
                     LocalDate rentDate = LocalDate.now();
-                    LocalDate returnDate = rentDate.plusDays(14); // Calculate return date
-                    Date sqlReturnDate = Date.valueOf(returnDate); // Convert LocalDate to java.sql.Date
+                    LocalDate returnDate = rentDate.plusDays(14);
+                    Date sqlReturnDate = Date.valueOf(returnDate); 
 
                     try (PreparedStatement insertRentalStmt = connection.prepareStatement(insertRentalRecord)) {
                         insertRentalStmt.setInt(1, userId);
@@ -215,10 +215,10 @@ public class BookDAO {
                         insertRentalStmt.setDate(3, sqlReturnDate); // Set return date
                         insertRentalStmt.executeUpdate();
                     }
-                    connection.commit(); // Commit transaction
+                    connection.commit(); 
                     return true;
                 } else {
-                    connection.rollback(); // Rollback transaction if book is not updated
+                    connection.rollback(); 
                 }
             }
         } catch (SQLException e) {
@@ -286,24 +286,24 @@ public class BookDAO {
         String updateRentalStatus = "UPDATE rentals SET status = 'returned' WHERE userid = ? AND bookid = ?";
 
         try (Connection connection = DBConnection.derbyConnection()) {
-            connection.setAutoCommit(false); // Start transaction
+            connection.setAutoCommit(false); 
 
-            // Update the book availability
+            
             try (PreparedStatement updateBookStmt = connection.prepareStatement(updateBookAvailability)) {
                 updateBookStmt.setInt(1, bookId);
                 int rowsUpdated = updateBookStmt.executeUpdate();
 
-                // If book availability update was successful, update rental status
+                
                 if (rowsUpdated > 0) {
                     try (PreparedStatement updateRentalStmt = connection.prepareStatement(updateRentalStatus)) {
                         updateRentalStmt.setInt(1, userId);
                         updateRentalStmt.setInt(2, bookId);
                         updateRentalStmt.executeUpdate();
                     }
-                    connection.commit(); // Commit transaction
+                    connection.commit(); 
                     return true;
                 } else {
-                    connection.rollback(); // Rollback transaction if book is not updated
+                    connection.rollback(); 
                 }
             }
         } catch (SQLException e) {
@@ -321,7 +321,7 @@ public class BookDAO {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                overdueCount = rs.getInt(1); // Get the count of overdue books
+                overdueCount = rs.getInt(1);
             }
 
         } catch (SQLException e) {
@@ -341,7 +341,7 @@ public class BookDAO {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                loanedCount = rs.getInt(1); // Get the count of loaned books
+                loanedCount = rs.getInt(1); 
             }
 
         } catch (SQLException e) {
