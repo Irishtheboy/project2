@@ -116,7 +116,7 @@ public class SignupPageGui extends JFrame {
         
         mainPnl.add(centerPnl, BorderLayout.CENTER);
         
-        // South panel layout
+        
         southPnl.add(signUpButton);
         southPnl.add(loginLinkLbl); 
         mainPnl.add(southPnl, BorderLayout.SOUTH);

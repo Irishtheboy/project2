@@ -12,3 +12,9 @@ os.arch=amd64
 os.version=10.0
 derby.system.home=C:\Users\Franco\Documents\GitHub\project2\Database
 Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Sun Oct 20 06:40:29 SAST 2024: Shutting down Derby engine
+----------------------------------------------------------------
+Sun Oct 20 06:40:29 SAST 2024:
+Shutting down instance a816c00e-0192-a82b-51b2-ffff85a68b67 on database directory C:\Users\Franco\Documents\GitHub\project2\Database\LibraryDatabse with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@73d16e93 
+----------------------------------------------------------------

@@ -27,7 +27,7 @@ public class TopMenu extends JFrame implements ActionListener {
         
         btnBooks.setBackground(Color.green);
         btnAudio.setBackground(Color.green);
-        this.setBackground(Color.yellow);
+        
         setTopMenu();
     }
 
