@@ -27,7 +27,7 @@ public class UserSession {
         UserDAO userDAO = new UserDAO();
         int userId = userDAO.getUserIdByUsername(loggedInUsername); 
         if (userId != -1) {
-            setLoggedInUserId(userId); 
+            setLoggedInUserId(userId);  
         } else {
             System.out.println("User ID not found for username: " + loggedInUsername);
         }

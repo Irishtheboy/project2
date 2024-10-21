@@ -13,10 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Sabura11
- */
+
 public class BookDAO {
 
     public List<Object[]> getAllBooks() {

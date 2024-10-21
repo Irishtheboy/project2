@@ -5,10 +5,6 @@
 package ac.za.cput.librarysystem.domain;
 
 
-/**
- *
- * @author Sabura11
- */
 public class Book {
     private int id;
     private String name;

@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 public class UserDAO {
 
-    // Oratile / Franco lukhele / Naqeebah
+    
     public boolean signUpUser(String username, String email, String phone, String password) {
         String insertUserSQL = "INSERT INTO USERS (username, email, phone, password) VALUES (?, ?, ?, ?)";
 
@@ -33,7 +33,7 @@ public class UserDAO {
 
     }
 
-    //Teyana & Franco & Mfana
+    
     public boolean signUpUser(String username, String email, String phone, String password, String role) {
         String insertUserSQL = "INSERT INTO USERS (username, email, phone, password, role) VALUES (?, ?, ?, ?, ?)";
 
@@ -116,13 +116,13 @@ public class UserDAO {
             pstmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "User deleted successfully.");
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace for debugging
+            e.printStackTrace();  
             JOptionPane.showMessageDialog(null, "Error deleting user: " + e.getMessage());
         }
     }
 
     public int getUserIdByUsername(String username) {
-    int userId = -1; // Default value if not found
+    int userId = -1; 
     String sql = "SELECT USERID FROM USERS WHERE CAST(USERNAME AS VARCHAR(128)) = ?";
 
     try (Connection connection = DBConnection.derbyConnection();
@@ -155,7 +155,7 @@ public class UserDAO {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error fetching user: " + e.getMessage());
         }
-        return null; // User not found
+        return null; 
     }
 
     public boolean isBookAvailable(int bookId) {
@@ -164,7 +164,7 @@ public class UserDAO {
             pstmt.setInt(1, bookId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) == 0; // Book is available if no rentals found
+                return rs.getInt(1) == 0; 
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error checking book availability: " + e.getMessage());
